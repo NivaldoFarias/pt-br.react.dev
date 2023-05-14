@@ -11,7 +11,7 @@
       "path": "/learn",
       "routes": [
         {
-          "title": "Tutorial: Jogo-da-Velha",
+          "title": "Tutorial: Jogo da Velha",
           "path": "/learn/tutorial-tic-tac-toe"
         },
         {
@@ -25,7 +25,7 @@
       "path": "/learn/installation",
       "routes": [
         {
-          "title": "Comece um Novo Projeto React",
+          "title": "Inicie um Novo Projeto em React",
           "path": "/learn/start-a-new-react-project"
         },
         {
@@ -95,15 +95,15 @@
           "path": "/learn/responding-to-events"
         },
         {
-          "title": "Estado: Memória de um Componente",
+          "title": "Estado: A Memória de um Componente",
           "path": "/learn/state-a-components-memory"
         },
         {
-          "title": "Renderizar e Confirmar",
+          "title": "Renderizar e Atribuir",
           "path": "/learn/render-and-commit"
         },
         {
-          "title": "Estado como um Snapshot",
+          "title": "Estado como uma Foto Instantânea",
           "path": "/learn/state-as-a-snapshot"
         },
         {
@@ -115,18 +115,18 @@
           "path": "/learn/updating-objects-in-state"
         },
         {
-          "title": "Atualizando Vetores no Estado",
+          "title": "Atualizando Arrays no Estado",
           "path": "/learn/updating-arrays-in-state"
         }
       ]
     },
     {
-      "title": "Gerenciando Estado",
+      "title": "Gerenciando o Estado",
       "path": "/learn/managing-state",
       "tags": ["intermediate"],
       "routes": [
         {
-          "title": "Reagindo à Entrada com Estado",
+          "title": "Reagindo à Entrada de dados com Estado",
           "path": "/learn/reacting-to-input-with-state"
         },
         {
@@ -134,23 +134,23 @@
           "path": "/learn/choosing-the-state-structure"
         },
         {
-          "title": "Compartilhando Estado entre Componentes",
+          "title": "Compartilhando Estados entre Componentes",
           "path": "/learn/sharing-state-between-components"
         },
         {
-          "title": "Preservando e Redefinindo Estado",
+          "title": "Preservando e Redefinindo Estados",
           "path": "/learn/preserving-and-resetting-state"
         },
         {
-          "title": "Extraindo a Lógica de Estado para um Reducer",
+          "title": "Extraindo a Lógica de Estados para um Reducer",
           "path": "/learn/extracting-state-logic-into-a-reducer"
         },
         {
-          "title": "Passando Dados Profundamente com Contexto",
+          "title": "Passando Dados Profundamente com Contextos",
           "path": "/learn/passing-data-deeply-with-context"
         },
         {
-          "title": "Escalando com Reducer e Context",
+          "title": "Escalando com Reducer e Contextos",
           "path": "/learn/scaling-up-with-reducer-and-context"
         }
       ]
@@ -161,7 +161,7 @@
       "tags": ["advanced"],
       "routes": [
         {
-          "title": "Referenciando Valores Através de Refs",
+          "title": "Referenciando Valores com Refs",
           "path": "/learn/referencing-values-with-refs"
         },
         {
@@ -189,7 +189,7 @@
           "path": "/learn/removing-effect-dependencies"
         },
         {
-          "title": "Reutilizando Lógica com Hooks Personalizados",
+          "title": "Reutilizando Lógicas com Hooks Personalizados",
           "path": "/learn/reusing-logic-with-custom-hooks"
         }
       ]

@@ -1,5 +1,5 @@
 ---
-title: Ferramenta de desenvolvedor do React
+title: Ferramentas do desenvolvedor React
 ---
 
 <Intro>

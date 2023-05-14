@@ -1,5 +1,5 @@
 ---
-title: JavaScript em JSX com chaves
+title: JavaScript entre Chaves no JSX
 ---
 
 <Intro>
