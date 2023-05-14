@@ -1,5 +1,5 @@
 ---
-title: Gerenciando o Estado
+title: Gerenciando o State
 ---
 
 <Intro>
