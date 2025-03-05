@@ -1,3 +1,4 @@
+```
 ---
 title: "Apresentando Componentes React de tamanho zero no Servidor"
 author: Dan Abramov, Lauren Tan, Joseph Savona, and Sebastian Markbage
@@ -32,3 +33,4 @@ Se você quiser conferir, recomendamos ir na seguinte ordem:
 3. **[Leia o RFC (com a seção de Perguntas Frequentes no final)](https://github.com/reactjs/rfcs/pull/188)** para uma análise técnica mais detalhada e para nos fornecer feedback.
 
 Nós estamos animados para ouvir vocês no RFC ou nas respostas do nosso [@reactjs](https://twitter.com/reactjs) Twitter oficial. Boas festas, fique seguro e nos vemos ano que vem!
+```
