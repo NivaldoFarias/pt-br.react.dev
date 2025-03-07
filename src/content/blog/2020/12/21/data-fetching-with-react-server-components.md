@@ -11,7 +11,7 @@ description: 2020 foi um longo ano. Ao chegar ao fim, gostaríamos de compartilh
 
 <Intro>
 
-2020 foi um longo ano. Como está chegando ao fim, gostaríamos de compartilhar uma atualização especial de fim de ano em nossa pesquisa sobre **Componentes React Server** de tamanho de pacote zero.
+2020 foi um longo ano. Como está chegando ao fim, gostaríamos de compartilhar uma atualização especial de fim de ano em nossa pesquisa sobre **React Server Components** de tamanho de pacote zero.
 
 </Intro>
 
