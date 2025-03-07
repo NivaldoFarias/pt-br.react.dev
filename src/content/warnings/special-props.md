@@ -1,4 +1,3 @@
----
 title: Aviso sobre Props Especiais
 ---
 
