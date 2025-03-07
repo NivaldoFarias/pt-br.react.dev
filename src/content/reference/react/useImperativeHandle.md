@@ -86,8 +86,7 @@ function MyInput({ ref }) {
 };
 ```
 
-Note that in the code above, the `ref` is no longer passed to the `<input>`.
-
+Observe que no código acima, a `ref` não é mais passada para o `<input>`.
 
 ```js {7-14}
 import { useRef, useImperativeHandle } from 'react';
@@ -111,7 +110,6 @@ function MyInput({ ref }) {
 ```
 
 Agora, se o componente pai obtiver uma referência para `MyInput`, ele será capaz de chamar os métodos `focus` e `scrollIntoView` nele. No entanto, ele não terá acesso total ao nó DOM `<input>` subjacente.
-
 
 <Sandpack>
 
@@ -176,7 +174,6 @@ input {
 
 Os métodos que você expõe por meio de um identificador imperativo não precisam corresponder exatamente aos métodos DOM. Por exemplo, este componente `Post` expõe um método `scrollAndFocusAddComment` por meio de um identificador imperativo. Isso permite que a `Page` pai role a lista de comentários *e* foque no campo de entrada quando você clica no botão:
 
-
 <Sandpack>
 
 ```js
@@ -232,7 +229,6 @@ function Post({ ref }) {
 
 export default Post;
 ```
-
 
 ```js src/CommentList.js
 import { useRef, useImperativeHandle } from 'react';
