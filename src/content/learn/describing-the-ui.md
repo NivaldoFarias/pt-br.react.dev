@@ -469,8 +469,8 @@ Leia **[Renderizando Listas](/learn/rendering-lists)** para aprender como render
 Algumas funções JavaScript são *puras*. Uma função pura:
 
 
-* **Cuida apenas de suas próprias responsabilidades.** Isso significa que ela não modifica nenhum objeto ou variável que existia antes que ela fosse chamada.
-* **Mesmas entradas, mesma saída.** Dadas as mesmas entradas, uma função pura sempre deve retornar o mesmo resultado.
+*   **Cuida apenas de suas próprias responsabilidades.** Isso significa que ela não modifica nenhum objeto ou variável que existia antes que ela fosse chamada.
+*   **Mesmas entradas, mesma saída.** Dadas as mesmas entradas, uma função pura sempre deve retornar o mesmo resultado.
 
 Escrevendo apenas funções puras, você pode evitar muitos erros e comportamentos imprevisíveis conforme seu código aumenta. Este é um exemplo de componente impuro:
 
