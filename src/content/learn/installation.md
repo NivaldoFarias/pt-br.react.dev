@@ -4,16 +4,16 @@ title: Instalação
 
 <Intro>
 
-React foi projetado desde o princípio para adoção gradual. Você pode utilizar o React o quanto for necessário. Seja se você quiser ter um gostinho do React, adicionar alguma interatividade a uma página HTML, ou iniciar uma aplicação complexa baseada em React, esta seção vai ajudá-lo a dar os primeiros passos.
+O React foi projetado desde o princípio para adoção gradual. Você pode utilizar o React o quanto for necessário. Seja se você quiser ter um gostinho do React, adicionar alguma interatividade a uma página HTML, ou iniciar uma aplicação complexa baseada em React, esta seção vai ajudá-lo a dar os primeiros passos.
 
 </Intro>
 
 <YouWillLearn isChapter={true}>
 
-* [Como iniciar um novo projeto em React](/learn/start-a-new-react-project)
-* [Como adicionar React a um projeto existente](/learn/add-react-to-an-existing-project)
-* [Como configurar seu editor](/learn/editor-setup)
-* [Como instalar as Ferramentas de Desenvolvedor React](/learn/react-developer-tools)
+*   [Como iniciar um novo projeto em React](/learn/start-a-new-react-project)
+*   [Como adicionar React a um projeto existente](/learn/add-react-to-an-existing-project)
+*   [Como configurar seu editor](/learn/editor-setup)
+*   [Como instalar as Ferramentas de Desenvolvedor React](/learn/react-developer-tools)
 
 </YouWillLearn>
 
@@ -54,4 +54,3 @@ Caso queira experimentar React em uma aplicação ou site já existentes, [adici
 ## Próximos passos {/*próximos-passos*/}
 
 Vá para o guia de [Início Rápido](/learn) para um tour pelos conceitos mais importantes de React que você encontrará no dia a dia.
-
