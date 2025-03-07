@@ -42,7 +42,6 @@ function Tooltip() {
   // ...
 ```
 
-
 [Veja mais exemplos abaixo.](#usage)
 
 #### Parâmetros {/*parameters*/}
@@ -86,7 +85,6 @@ Para fazer isso, é necessário renderizar duas vezes:
 3. Renderize a ferramenta de dica *novamente* no local correto.
 
 **Tudo isso precisa acontecer antes do navegador exibir a tela.** Você não quer que o usuário veja a ferramenta de dica se movendo. Chame o `useLayoutEffect` para realizar as medições de layout antes do navegador exibir a tela:
-
 
 ```js {5-8}
 function Tooltip() {
