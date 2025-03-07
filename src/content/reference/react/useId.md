@@ -42,7 +42,7 @@ function PasswordField() {
 
 #### Ressalvas {/*caveats*/}
 
-* `useId` é um Hook, então você só pode chamá-lo **no nível superior do seu componente** ou no seus próprios Hooks. Você não pode chamá-lo dentro de loops ou condições. Se precisar, extraia um novo componente e mova o estado para ele.
+* `useId` é um Hook, então você só pode chamá-lo **no nível superior do seu componente** ou no seus próprios Hooks. Você não pode chamá-lo dentro de loops ou condições. Se precisar, extraia um novo componente e mova o state para ele.
 
 * `useId` **não deve ser usado para gerar chaves** em uma lista. [As chaves devem ser geradas a partir de seus dados.](/learn/rendering-lists#where-to-get-your-key)
 
