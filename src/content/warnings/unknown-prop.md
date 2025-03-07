@@ -45,7 +45,7 @@ function MyDiv(props) {
 }
 ```
 
-**Bom:**  Você também pode atribuir as props a um novo objeto e excluir as chaves que você está usando do novo objeto. Certifique-se de não excluir as props do objeto original `this.props`, pois esse objeto deve ser considerado imutável.
+**Bom:** Você também pode atribuir as props a um novo objeto e excluir as chaves que você está usando do novo objeto. Certifique-se de não excluir as props do objeto original `this.props`, pois esse objeto deve ser considerado imutável.
 
 ```js
 function MyDiv(props) {
