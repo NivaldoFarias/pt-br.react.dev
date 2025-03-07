@@ -4,7 +4,7 @@ title: Renderização condicional
 
 <Intro>
 
-Seus componentes frequentemente precisarão exibir coisas diferentes dependendo de diferentes condições. No React, você pode renderizar condicionalmente JSX usando sintaxe do JavaScript, como declarações `if`, e operadores `? :` e `&&`.
+Seus **componentes** frequentemente precisarão exibir coisas diferentes dependendo de diferentes condições. No React, você pode renderizar condicionalmente JSX usando sintaxe do JavaScript, como declarações `if`, e operadores `? :` e `&&`.
 
 </Intro>
 
@@ -52,7 +52,7 @@ export default function PackingList() {
 
 </Sandpack>
 
-Observe que alguns dos componentes `Item` possuem a propriedade `isPacked` definida como `true` ao invés de `false`. Você deseja adicionar uma marca de seleção (✅) aos itens empacotados se `isPacked={true}`.
+Observe que alguns dos **componentes** `Item` possuem a propriedade `isPacked` definida como `true` ao invés de `false`. Você deseja adicionar uma marca de seleção (✅) aos itens empacotados se `isPacked={true}`.
 
 Você pode escrever isso como uma [declaração `if`/`else`](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Statements/if...else) da seguinte maneira:
 
@@ -152,7 +152,7 @@ export default function PackingList() {
 
 </Sandpack>
 
-Na prática, retornar `null` de um componente não é comum porque pode surpreender um desenvolvedor que está tentando renderizá-lo. Com mais frequência, você condicionalmente incluiria ou excluíria o componente no JSX do componente pai. Veja como fazer isso!
+Na prática, retornar `null` de um componente não é comum porque pode surpreender um desenvolvedor que está tentando renderizá-lo. Com mais frequência, você condicionalmente incluiria ou excluiria o componente no JSX do componente pai. Veja como fazer isso!
 
 ## Incluindo JSX condicionalmente {/*conditionally-including-jsx*/}
 
@@ -310,8 +310,7 @@ export default function PackingList() {
 
 </Sandpack>
 
-A [Express JavaScript &&](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Operators/Logical_AND) retorna o valor do seu lado direito (no nosso caso, o marcador de verificação) se o lado esquerdo (a nossa condição) for `true`. Mas se a condição for `false`, a expressão inteira se torna `false`. O React considera `false` como um "vazio" na árvore JSX, assim como `null` ou `undefined`, e não renderiza nada em seu lugar.
-
+A [Expressão JavaScript &&](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Operators/Logical_AND) retorna o valor do seu lado direito (no nosso caso, o marcador de verificação) se o lado esquerdo (a nossa condição) for `true`. Mas se a condição for `false`, a expressão inteira se torna `false`. O React considera `false` como um "vazio" na árvore JSX, assim como `null` ou `undefined`, e não renderiza nada em seu lugar.
 
 <Pitfall>
 
@@ -449,8 +448,6 @@ Se você não está familiarizado com JavaScript, essa variedade de estilos pode
 * Os atalhos são comuns, mas você não precisa usá-los se preferir usar um `if` simples.
 
 </Recap>
-
-
 
 <Challenges>
 
