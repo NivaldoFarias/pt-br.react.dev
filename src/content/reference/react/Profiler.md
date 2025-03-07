@@ -54,7 +54,7 @@ function onRender(id, phase, actualDuration, baseDuration, startTime, commitTime
 #### Parâmetros {/*onrender-parameters*/}
 
 * `id`: A string `id` prop da árvore `<Profiler>` que acabou de ser processada. Isso permite identificar qual parte da árvore foi processada, especialmente se você estiver usando vários profilers.
-* `phase`: `"mount"`, `"update"` ou `"nested-update"`. Indica se a árvore foi montada pela primeira vez ou renderizada novamente devido a uma mudança em props, estado ou Hooks.
+* `phase`: `"mount"`, `"update"` ou `"nested-update"`. Indica se a árvore foi montada pela primeira vez ou renderizada novamente devido a uma mudança em props, state ou Hooks.
 * `actualDuration`: O número de milissegundos gastos renderizando o `<Profiler>` e seus descendentes para a atualização atual. Indica o quão bem a subárvore utiliza a memorização (por exemplo, [`memo`](/reference/react/memo) e [`useMemo`](/reference/react/useMemo)). Idealmente, esse valor deve diminuir significativamente após a montagem inicial, pois muitos dos descendentes só precisarão ser renderizados novamente se suas props específicas mudarem.
 * `baseDuration`: O número de milissegundos estimando quanto tempo levaria para renderizar novamente toda a subárvore `<Profiler>` sem otimizações. É calculado somando as durações de renderização mais recentes de cada componente na árvore. Esse valor estima o custo em um cenário de pior caso de renderização (por exemplo, a montagem inicial ou uma árvore sem memorização). Compare `actualDuration` com ele para ver se a memorização está funcionando.
 * `startTime`: Um timestamp numérico que indica quando o React começou a renderizar a atualização atual.
@@ -129,4 +129,3 @@ Você também pode aninhar componentes `<Profiler>`:
 Embora `<Profiler>` seja um componente leve, ele deve ser usado apenas quando necessário. Cada uso adiciona uma sobrecarga de CPU e memória à aplicação.
 
 ---
-
