@@ -37,12 +37,12 @@ Se ainda não viu a nova página inicial, veja!
 
 ## Apostando tudo no React moderno com Hooks {/*going-all-in-on-modern-react-with-hooks*/}
 
-Quando lançamos o React Hooks em 2018, os documentos do Hooks assumiram que o leitor estava familiarizado com componentes de classe. Isso ajudou a comunidade a adotar Hooks muito rapidamente, mas depois de um tempo os documentos antigos falharam em servir os novos leitores. Novos leitores tiveram que aprender React duas vezes: uma vez com componentes de classe e outra vez com Hooks.
+Quando lançamos o React Hooks em 2018, os documentos dos Hooks assumiram que o leitor estava familiarizado com componentes de classe. Isso ajudou a comunidade a adotar Hooks muito rapidamente, mas depois de um tempo os documentos antigos falharam em servir os novos leitores. Novos leitores tiveram que aprender React duas vezes: uma vez com componentes de classe e outra vez com Hooks.
 
 **A nova documentação ensina React com Hooks desde o início.** A documentação está dividida em duas seções principais:
 
-* **[Aprenda React](/learn)** é um curso individualizado que ensina React do zero.
-* **[Referências de API](/reference)** fornece os detalhes e exemplos de uso para cada API React.
+*   **[Aprenda React](/learn)** é um curso individualizado que ensina React do zero.
+*   **[Referências de API](/reference)** fornece os detalhes e exemplos de uso para cada API React.
 
 Vamos ver mais detalhadamente o que pode encontrar em cada seção.
 
@@ -239,13 +239,13 @@ Gostaríamos que todos no mundo tivessem a mesma oportunidade de aprender React 
 
 É por isso que a seção Aprenda está organizada como um curso individualizado dividido em capítulos. Os dois primeiros capítulos descrevem os fundamentos do React. Se você é novo no React, ou quer refrescar sua memória, comece aqui:
 
-- **[Descrevendo a IU](/learn/describing-the-ui)** ensina a exibir informações com componentes.
-- **[Adicionando Interatividade](/learn/adding-interactivity)** ensina como atualizar a tela em resposta à entrada do usuário.
+-   **[Descrevendo a IU](/learn/describing-the-ui)** ensina a exibir informações com componentes.
+-   **[Adicionando Interatividade](/learn/adding-interactivity)** ensina como atualizar a tela em resposta à entrada do usuário.
 
 Os próximos dois capítulos são mais avançados e fornecerão uma compreensão mais profunda das partes mais complicadas:
 
-- **[Gerenciando o Estado](/learn/managing-state)** ensina como organizar sua lógica à medida que seu aplicativo se torna mais complexo.
-- **[Saídas de Emergência](/learn/escape-hatches)** ensina como você pode 'sair do escopo' do React e quando isso faz mais sentido.
+-   **[Gerenciando o Estado](/learn/managing-state)** ensina como organizar sua lógica à medida que seu aplicativo se torna mais complexo.
+-   **[Saídas de Emergência](/learn/escape-hatches)** ensina como você pode 'sair do escopo' do React e quando isso faz mais sentido.
 
 Cada capítulo consiste em várias páginas relacionadas. A maioria dessas páginas ensina uma habilidade específica ou uma técnica—por exemplo, [Escrevendo Tags com JSX](/learn/writing-markup-with-jsx), [Atualizando Objetos no State](/learn/updating-objects-in-state), ou [Compartilhando State Entre Componentes](/learn/sharing-state-between-components). Algumas das páginas focam na explicação de uma idéia—como [Renderizar e Confirmar](/learn/render-and-commit), ou [State como uma Foto Instantânea](/learn/state-as-a-snapshot). E há alguns, como [Talvez você não precise de um Effect](/learn/you-might-not-need-an-effect), que compartilham nossas sugestões com base no que aprendemos ao longo desses anos.
 
@@ -343,9 +343,9 @@ export default function PackingList() {
 
 Neste exemplo, cada `Item` recebe uma prop `importance` numérica. Use o operador `&&` para renderizar "_(Relevância: X)_" em itálico, mas apenas para os itens que têm relevância diferente de zero. Sua lista de itens deve ficar assim:
 
-* Traje espacial _(Relevância: 9)_
-* Capacete com folha dourada
-* Foto de Tam _(Relevância: 6)_
+*   Traje espacial _(Relevância: 9)_
+*   Capacete com folha dourada
+*   Foto de Tam _(Relevância: 6)_
 
 Não se esqueça de adicionar um espaço entre as duas etiquetas!
 
@@ -459,11 +459,11 @@ Confirmamos com os desenvolvedores de navegadores que esta representação é 10
 
 Na [API de Referência](/reference/react), cada API React tem agora uma página dedicada. Isso inclui todos os tipos de APIs:
 
-- Hooks incorporados como [`useState`](/reference/react/useState).
-- Componentes incorporados como [`<Suspense>`](/reference/react/Suspense).
-- Componentes do navegador incorporados como [`<input>`](/reference/react-dom/components/input).
-- APIs orientadas para frameworks como[`renderToPipeableStream`](/reference/react-dom/server/renderToReadableStream).
-- Outras APIs do React como [`memo`](/reference/react/memo).
+-   Hooks incorporados como [`useState`](/reference/react/useState).
+-   Componentes incorporados como [`<Suspense>`](/reference/react/Suspense).
+-   Componentes do navegador incorporados como [`<input>`](/reference/react-dom/components/input).
+-   APIs orientadas para frameworks como[`renderToPipeableStream`](/reference/react-dom/server/renderToReadableStream).
+-   Outras APIs do React como [`memo`](/reference/react/memo).
 
 Você perceberá que cada página de API é dividida em pelo menos dois segmentos: *Referência* e *Uso*.
 
@@ -619,11 +619,11 @@ Reconhecemos que este projeto demorou muito tempo a ser lançado. Nós queríamo
 
 Ouvimos muitos dos seus pedidos para expandir o conteúdo e a funcionalidade do site, por exemplo:
 
-- Fornecimento de uma versão TypeScript para todos os exemplos;
-- Criar os guias atualizados de desempenho, teste e acessibilidade;
-- Documentar os componentes do React Server independentemente dos frameworks que os suportam;
-- Trabalhar com nossa comunidade internacional para traduzir os novos documentos;
-- Adicionar recursos ausentes ao novo site (por exemplo, RSS para este blog).
+-   Fornecimento de uma versão TypeScript para todos os exemplos;
+-   Criar os guias atualizados de desempenho, teste e acessibilidade;
+-   Documentar os componentes do React Server independentemente dos frameworks que os suportam;
+-   Trabalhar com nossa comunidade internacional para traduzir os novos documentos;
+-   Adicionar recursos ausentes ao novo site (por exemplo, RSS para este blog).
 
 Agora que o [react.dev](https://react.dev/) foi lançado, seremos capazes de mudar nosso foco de "acompanhar" os recursos educacionais de terceiros sobre o React para adicionar novas informações e melhorar ainda mais nosso novo site.
 
