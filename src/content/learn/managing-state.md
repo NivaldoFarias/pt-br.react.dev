@@ -4,13 +4,13 @@ title: Gerenciando o Estado
 
 <Intro>
 
-À medida que a sua aplicação cresce, ajuda ser mais intencional sobre como o seu estado é organizado e como os dados fluem entre os seus componentes. O estado redundante ou duplicado é uma fonte comum de bugs. Neste capítulo, você aprenderá como estruturar bem o seu estado, como manter a lógica de atualização do seu estado e como compartilhar o estado entre componentes distantes.
+À medida que a sua aplicação cresce, ajuda ser mais intencional sobre como o seu estado é organizado e como os dados fluem entre os seus componentes. O estado redundante ou duplicado é uma fonte comum de erros. Neste capítulo, você aprenderá como estruturar bem o seu estado, como manter a lógica de atualização do seu estado e como compartilhar o estado entre componentes distantes.
 
 </Intro>
 
 <YouWillLearn isChapter={true}>
 
-* [Como pensar sobre as mudanças de IU como mudanças de estado](/learn/reacting-to-input-with-state)
+* [Como pensar sobre as mudanças de UI como mudanças de estado](/learn/reacting-to-input-with-state)
 * [Como estruturar bem o estado](/learn/choosing-the-state-structure)
 * [Como "levantar estado" para compartilhá-lo entre componentes](/learn/sharing-state-between-components)
 * [Como controlar se o estado é preservado ou reiniciado](/learn/preserving-and-resetting-state)
@@ -25,7 +25,6 @@ title: Gerenciando o Estado
 Com React, você não modificará a UI a partir do código diretamente. Por exemplo, você não vai escrever comandos como "desativar o botão", "ativar o botão", "mostrar a mensagem de sucesso", etc. Em vez disso, você descreverá a UI que deseja ver para os diferentes estados visuais de seu componente ("estado inicial", "estado de digitação", "estado de sucesso") e então acionará as mudanças de estado em resposta à inserção de dados do usuário. Isto é semelhante a como os designers pensam sobre a UI.
 
 Aqui está um formulário de questionário construído usando React. Observe como ele utiliza a variável `status` para determinar se deve habilitar ou desabilitar o botão de submeter, e se deve mostrar a mensagem de sucesso no seu lugar.
-
 
 <Sandpack>
 
@@ -115,7 +114,7 @@ Leia **[Reagindo à inserção de dados com o estado](/learn/reacting-to-input-w
 
 ## Como estruturar bem o estado {/*choosing-the-state-structure*/}
 
-A boa estruturação do estado pode fazer a diferença entre um componente que é agradável de modificar e debugar e um que é uma fonte contínua de bugs. O princípio mais importante é que o estado não deve conter informações redundantes ou duplicadas. Se houver algum estado desnecessário, é fácil esquecer de atualizá-lo e introduzir bugs!
+A boa estruturação do estado pode fazer a diferença entre um componente que é agradável de modificar e debugar e um que é uma fonte contínua de erros. O princípio mais importante é que o estado não deve conter informações redundantes ou duplicadas. Se houver algum estado desnecessário, é fácil esquecer de atualizá-lo e introduzir erros!
 
 Por exemplo, este formulário tem uma variável de estado **redundante** `fullName`:
 
@@ -222,11 +221,11 @@ label { display: block; margin-bottom: 5px; }
 
 </Sandpack>
 
-Isto pode parecer uma pequena mudança mas muitos bugs em aplicações React são corrigidos desta forma.
+Isto pode parecer uma pequena mudança mas muitos erros em aplicações React são corrigidos desta forma.
 
 <LearnMore path="/learn/choosing-the-state-structure">
 
-Leia **[Escolhendo a estrutura do estado](/learn/choosing-the-state-structure)** para aprender como modelar a forma do estado para evitar bugs.
+Leia **[Escolhendo a estrutura do estado](/learn/choosing-the-state-structure)** para aprender como modelar a forma do estado para evitar erros.
 
 </LearnMore>
 
