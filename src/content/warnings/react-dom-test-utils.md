@@ -28,7 +28,7 @@ A equipe do React recomenda migrar seus testes para [@testing-library/react](htt
 
 ### ReactDOMTestUtils.renderIntoDocument {/*reactdomtestutilsrenderintodocument*/}
 
-O `renderIntoDocument` pode ser substituído por `render` de `@testing-library/react`.
+`renderIntoDocument` pode ser substituído por `render` de `@testing-library/react`.
 
 Antes:
 
