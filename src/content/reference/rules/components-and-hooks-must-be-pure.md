@@ -16,14 +16,13 @@ Esta página de referência cobre tópicos avançados e demanda familiaridade co
 
 Um dos conceitos fundamentais que define o React é a pureza. Um componente ou hook puro é aquele que é:
 
-* **Idempotente** – Obtém [sempre o mesmo resultado toda vez que](/learn/keeping-components-pure#purity-components-as-formulas) é executado com as mesmas entradas - props, state, contexto para entradas de componentes; e argumentos para entradas de hooks.
-* **Não tem efeitos colaterais na renderização** – O código com efeitos colaterais deve ser executado [**separadamente da renderização**](#how-does-react-run-your-code). Como por exemplo um [manipulador de eventos (event handler)](/learn/responding-to-events) – em que o usuário interage com a UI e a faz atualizar; ou como um [Effect](/reference/react/useEffect) – que é executado após a renderização.
-* **Não altera valores não locais**: Componentes e Hooks não devem [nunca modificar valores que não são criados localmente](#mutation) na renderização.
+*   **Idempotente** – Obtém [sempre o mesmo resultado toda vez que](/learn/keeping-components-pure#purity-components-as-formulas) é executado com as mesmas entradas - props, state, contexto para entradas de componentes; e argumentos para entradas de hooks.
+*   **Não tem efeitos colaterais na renderização** – O código com efeitos colaterais deve ser executado [**separadamente da renderização**](#how-does-react-run-your-code). Como por exemplo um [manipulador de eventos (event handler)](/learn/responding-to-events) – em que o usuário interage com a UI e a faz atualizar; ou como um [Effect](/reference/react/useEffect) – que é executado após a renderização.
+*   **Não altera valores não locais**: Componentes e Hooks não devem [nunca modificar valores que não são criados localmente](#mutation) na renderização.
 
 Quando a renderização é mantida pura, o React pode entender como priorizar quais atualizações são mais importantes para o usuário ver primeiro. Isso é possível por causa da pureza do render: como os componentes não têm efeitos colaterais [no render](#how-does-react-run-your-code), o React pode pausar a renderização de componentes que não são tão importantes para atualizar, e só voltar a eles mais tarde quando for necessário.
 
 Concretamente, isto significa que a lógica de renderização pode ser executada várias vezes de uma forma que permite ao React dar ao usuário uma experiência agradável. No entanto, se o seu componente tiver um efeito colateral não rastreado - como modificar o valor de uma variável global [durante a renderização](#how-does-react-run-your-code) - quando o React executar seu código de renderização novamente, seus efeitos colaterais serão acionados de uma forma que não corresponderá ao que você deseja. Isso geralmente leva a bugs inesperados que podem degradar a forma como seus usuários experimentam seu aplicativo. Você pode ver um [exemplo disso na página Keeping Components Pure](/learn/keeping-components-pure#side-effects-unintended-consequences).
-
 
 #### Como é que o React executa o seu código?? {/*how-does-react-run-your-code*/}
 
@@ -65,6 +64,7 @@ function Dropdown() {
   }, [selectedItems]);
 }
 ```
+
 </DeepDive>
 
 ---
@@ -126,7 +126,6 @@ Se não precisar sincronizar algum state externo com o React, pode também consi
 
 [Efeitos colaterais](/learn/keeping-components-pure#side-effects-unintended-consequences) não devem ser executados [no render](#how-does-react-run-your-code), pois o React pode renderizar componentes várias vezes para criar a melhor experiência possível para o usuário.
 
-
 <Note>
 Efeitos colaterais são um termo mais amplo que Efeitos. Efeitos referem-se especificamente a código que está envolvido em `useEffect`, enquanto um efeito colateral é um termo geral para código que tem qualquer efeito observável além de seu resultado primário de retornar um valor para quem o chamou.
 
@@ -139,6 +138,7 @@ Enquanto o render deve ser mantido puro, efeitos colaterais são necessários em
 ### Quando é que se pode ter uma mutação? {/*mutation*/}
 
 #### Mutação local {/*local-mutation*/}
+
 Um exemplo comum de efeito colateral é a mutação, que em JavaScript se refere à alteração do valor de uma variável não-[primitiva](https://developer.mozilla.org/pt-BR/docs/Glossary/Primitive). Em geral, embora a mutação não seja idiomática no React, a mutação _local_ é absolutamente boa:
 
 ```js {2,7}
@@ -209,6 +209,7 @@ As props e o state de um componente são imutáveis [snapshots](learn/state-as-a
 Você pode pensar nos valores de props e state como snapshots que são atualizados após a renderização. Por esse motivo, você não modifica as variáveis props ou state diretamente: em vez disso, você passa novas props, ou usa a função setter fornecida para dizer ao React que o state precisa ser atualizado na próxima vez que o componente for renderizado.
 
 ### Não alterar Props {/*props*/}
+
 As props são imutáveis porque, se as alterar, a aplicação produzirá resultados inconsistentes, o que pode ser difícil de depurar, uma vez que pode ou não funcionar, dependendo das circunstâncias.
 
 ```js {2}
@@ -226,6 +227,7 @@ function Post({ item }) {
 ```
 
 ### Não alterar state {/*state*/}
+
 O `useState` devolve a variável de estado e um setter para atualizar esse state.
 
 ```js
