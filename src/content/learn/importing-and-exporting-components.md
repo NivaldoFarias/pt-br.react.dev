@@ -4,7 +4,7 @@ title: Importando e Exportando Componentes
 
 <Intro>
 
-A magia dos componentes reside na sua habilidade de reutilização: você pode criar um componente que é composto por outros componentes. Mas conforme você aninha mais e mais componentes, faz sentido começar a dividi-los em arquivos diferentes. Isso permite que você mantenha seus arquivos fáceis de explorar e reutiliza-los em mais lugares.
+A mágica dos componentes reside na sua habilidade de reutilização: você pode criar um componente que é composto por outros componentes. Mas conforme você aninha mais e mais componentes, faz sentido começar a dividi-los em arquivos diferentes. Isso permite que você mantenha seus arquivos fáceis de explorar e reutiliza-los em mais lugares.
 
 </Intro>
 
