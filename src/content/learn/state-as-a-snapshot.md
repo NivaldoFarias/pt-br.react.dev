@@ -1,5 +1,5 @@
 ---
-title: State como uma Foto Instantânea
+title: Estado como uma Foto Instantânea
 ---
 
 <Intro>
