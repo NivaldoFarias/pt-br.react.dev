@@ -29,8 +29,7 @@ Quando desejar que um componente "guarde" alguma informação, mas não que ela 
 const ref = useRef(0);
 ```
 
-Assim como estado, refs são retidas pelo React entre rerrenderizações. Entretanto, definir estado rerrenderiza um componente. Mudar uma ref, não! Você pode acessar o valor atual de uma ref através da propriedade `ref.current`.
-
+Assim como state, refs são retidas pelo React entre rerrenderizações. Entretanto, definir state rerrenderiza um componente. Mudar uma ref, não! Você pode acessar o valor atual de uma ref através da propriedade `ref.current`.
 
 <Sandpack>
 
@@ -100,11 +99,9 @@ Leia **[Manipulando o DOM com refs](/learn/manipulating-the-dom-with-refs)** par
 
 ## Sincronizando com Effects {/*synchronizing-with-effects*/}
 
-Alguns componentes precisam se sincronizar com sistemas externos. Por exemplo, você talvez precise controlar um componente fora do React com base no estado do React, estabelecer uma conexão com um servidor ou enviar um log de *analytics* quando um componente aparecer na tela. Diferentemente de *handlers* de eventos, que permitem tratar eventos específicos, *Effects* te permitem executar um trecho de código após a renderização. Utilize-os para sincronizar seu componente com o sistema fora do React.
-
+Alguns componentes precisam se sincronizar com sistemas externos. Por exemplo, você talvez precise controlar um componente fora do React com base no state do React, estabelecer uma conexão com um servidor ou enviar um log de *analytics* quando um componente aparecer na tela. Diferentemente de *handlers* de eventos, que permitem tratar eventos específicos, *Effects* te permitem executar um trecho de código após a renderização. Utilize-os para sincronizar seu componente com o sistema fora do React.
 
 Clique em Play/Pause algumas vezes e veja como o player de vídeo permanece sincronizado com o valor da prop `isPlaying`:
-
 
 <Sandpack>
 
@@ -149,7 +146,6 @@ video { width: 250px; }
 </Sandpack>
 
 Muitos Effects também "se limpam". Por exemplo, um Effect que estabelece uma conexão com um servidor de chat deveria retornar uma *função de limpeza* que informa ao React como se desconectar de tal servidor:
-
 
 <Sandpack>
 
@@ -197,14 +193,13 @@ Leia **[Sincronizando com Effects](/learn/synchronizing-with-effects)** para apr
 
 ## Talvez você não precise de um Effect {/*you-might-not-need-an-effect*/}
 
-Effects são uma saída de emergência do paradigma do React. Eles permitem que você "contorne" o React e sincronize seus componentes com algum sistema externo. Se não houver sistema externo envolvido (por exemplo, se você quiser atualizar o estado de um componente com props ou mudança de estado), você não deveria usar um Effect. Remover Effects desnecessários tornará seu código mais fácil de se entender, mais rápido e menos propenso a erros.
+Effects são uma saída de emergência do paradigma do React. Eles permitem que você "contorne" o React e sincronize seus componentes com algum sistema externo. Se não houver sistema externo envolvido (por exemplo, se você quiser atualizar o state de um componente com props ou mudança de state), você não deveria usar um Effect. Remover Effects desnecessários tornará seu código mais fácil de se entender, mais rápido e menos propenso a erros.
 
 Há dois casos comuns nos quais você não precisa de Effects:
 - **Você não precisa de Effects para transformar dados para renderização.**
 - **Você não precisa de Effects para lidar com eventos do usuário.**
 
-
-Por exemplo, você não precisa de um Effect para ajustar um estado baseado em outro estado:
+Por exemplo, você não precisa de um Effect para ajustar um state baseado em outro state:
 
 ```js {5-9}
 function Form() {
@@ -240,11 +235,9 @@ Leia **[Talvez você não precise de um Effect](/learn/you-might-not-need-an-eff
 
 </LearnMore>
 
-
-
 ## Ciclo de vida de Effects reativos {/*lifecycle-of-reactive-effects*/}
 
-Effects têm um ciclo de vida diferente dos componentes. Componentes podem se montar, atualizar ou desmontar. Um Effect só pode fazer duas coisas: começar a sincronizar algo e, mais tarde, parar a sincronização. Esse ciclo pode acontecer múltiplas vezes se seu Effect depender de props e estado que possam mudar ao longo do tempo.
+Effects têm um ciclo de vida diferente dos componentes. Componentes podem se montar, atualizar ou desmontar. Um Effect só pode fazer duas coisas: começar a sincronizar algo e, mais tarde, parar a sincronização. Esse ciclo pode acontecer múltiplas vezes se seu Effect depender de props e state que possam mudar ao longo do tempo.
 
 Este Effect depende do valor da prop `roomId`. Props são *valores reativos*, o que significa que podem mudar em uma rerrenderização. Note que um Effect *ressincroniza* (e reconecta ao servidor) caso `roomId` seja alterado:
 
@@ -325,7 +318,7 @@ Essa seção descreve uma **API experimental que ainda não foi lançada** em um
 
 </Wip>
 
-_Handlers_ de eventos só são executados novamente caso uma interação ocorra de novo. Diferentemente de _handlers_ de eventos, Effects resincronizam se qualquer valor lido por eles, como props ou estado, mudarem desde a última renderização. Às vezes, você deseja uma mistura dos dois comportamentos: um Effect que é executado novamente em resposta a alguns valores, mas não a outros.
+_Handlers_ de eventos só são executados novamente caso uma interação ocorra de novo. Diferentemente de _handlers_ de eventos, Effects resincronizam se qualquer valor lido por eles, como props ou state, mudarem desde a última renderização. Às vezes, você deseja uma mistura dos dois comportamentos: um Effect que é executado novamente em resposta a alguns valores, mas não a outros.
 
 Todo código dentro de Effects é *reativo*. Ele será executado novamente se algum valor reativo lido por ele se alterar por causa de uma rerrenderização. Por exemplo, esse Effect irá reconectar ao chat se `roomId` ou `theme` tiverem mudado.
 
@@ -762,7 +755,6 @@ Leia **[Removendo dependências de Effect](/learn/removing-effect-dependencies)*
 O React vem com diversos Hooks prontos, como `useState`, `useContext` e `useEffect`. Às vezes, você desejará que houvesse um Hook para um propósito mais específico: por exemplo, buscar dados, observar se um usuário está online, ou para conectar-se a uma sala de chat. Para fazer isso, você pode criar seus próprios Hooks conforme as necessidades da sua aplicação.
 
 Neste exemplo, o Hook customizado `usePointerPosition` acompanha a posição do cursor enquanto o outro Hook customizado `useDelayedValue` retorna um valor passado a ele com o atraso de uma quantidade arbitrária de milissegundos. Mova o cursor sobre a àrea de pré-visualização do *sandbox* para ver um rastro de pontinhos acompanhando a trajetória do cursor:
-
 
 <Sandpack>
 
