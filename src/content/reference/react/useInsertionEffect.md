@@ -54,8 +54,8 @@ function useCSS(rule) {
 
 #### Avisos {/*caveats*/}
 
-* Effects (efeitos) só são executados pelo cliente. Eles não são executados durante a renderização do servidor.
-* Não é possível atualizar o estado de dentro do `useInsertionEffect`.
+* Effects só são executados pelo cliente. Eles não são executados durante a renderização do servidor.
+* Não é possível atualizar o state de dentro do `useInsertionEffect`.
 * No momento em que `useInsertionEffect` é executado, as refs ainda não foram anexadas.
 * O `useInsertionEffect` pode ser utilizado antes ou depois do DOM ter sido atualizado. Você não deve confiar que o DOM seja atualizado em um determinado momento.
 * Ao contrário de outros tipos de Effects, que disparam a limpeza para cada Effect e depois a configuração para cada Effect, `useInsertionEffect` irá disparar tanto a limpeza quanto a configuração de um componente de cada vez. Isso resulta em uma “intercalação” das funções de limpeza e configuração.
