@@ -4,7 +4,7 @@ title: React Meetups
 
 <Intro>
 
-Do you have a local React.js meetup? Add it here! (Please keep the list alphabetical)
+Você tem um meetup local do React.js? Adicione aqui! (Por favor, mantenha a lista em ordem alfabética)
 
 </Intro>
 
