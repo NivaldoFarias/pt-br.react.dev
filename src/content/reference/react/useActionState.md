@@ -1,10 +1,22 @@
----
-title: useActionState
----
+```json
+{
+  "title": "useActionState",
+  "MDN_links": [
+    {
+      "text": "MDN",
+      "link": "https://developer.mozilla.org/pt-BR/"
+    },
+    {
+      "text": "Wikipedia",
+      "link": "https://pt.wikipedia.org/wiki/Wikipédia:Página_principal"
+    }
+  ]
+}
+```
 
 <Intro>
 
-`useActionState` is a Hook that allows you to update state based on the result of a form action.
+`useActionState` é um Hook que permite que você atualize o `state` com base no resultado de uma ação de formulário.
 
 ```js
 const [state, formAction, isPending] = useActionState(fn, initialState, permalink?);
@@ -14,22 +26,21 @@ const [state, formAction, isPending] = useActionState(fn, initialState, permalin
 
 <Note>
 
-In earlier React Canary versions, this API was part of React DOM and called `useFormState`.
+Em versões anteriores do React Canary, esta API fazia parte do React DOM e era chamada de `useFormState`.
 
 </Note>
-
 
 <InlineToc />
 
 ---
 
-## Reference {/*reference*/}
+## Referência {/*reference*/}
 
 ### `useActionState(action, initialState, permalink?)` {/*useactionstate*/}
 
 {/* TODO T164397693: link to actions documentation once it exists */}
 
-Call `useActionState` at the top level of your component to create component state that is updated [when a form action is invoked](/reference/react-dom/components/form). You pass `useActionState` an existing form action function as well as an initial state, and it returns a new action that you use in your form, along with the latest form state and whether the Action is still pending. The latest form state is also passed to the function that you provided.
+Chame `useActionState` no topo do seu componente para criar um `state` de componente que é atualizado [quando uma ação de formulário é invocada](/reference/react-dom/components/form). Você passa para `useActionState` uma função de ação de formulário existente, bem como um `initialState`, e ele retorna uma nova ação que você usa em seu formulário, juntamente com o último `state` do formulário e se a Action ainda está pendente. O último `state` do formulário também é passado para a função que você forneceu.
 
 ```js
 import { useActionState } from "react";
@@ -49,40 +60,40 @@ function StatefulForm({}) {
 }
 ```
 
-The form state is the value returned by the action when the form was last submitted. If the form has not yet been submitted, it is the initial state that you pass.
+O `state` do formulário é o valor retornado pela ação quando o formulário foi enviado por último. Se o formulário ainda não foi enviado, é o `initialState` que você passa.
 
-If used with a Server Function, `useActionState` allows the server's response from submitting the form to be shown even before hydration has completed.
+Se usado com uma Server Function, `useActionState` permite que a resposta do servidor ao enviar o formulário seja mostrada mesmo antes que a hidratação seja concluída.
 
-[See more examples below.](#usage)
+[Veja mais exemplos abaixo.](#usage)
 
-#### Parameters {/*parameters*/}
+#### Parâmetros {/*parameters*/}
 
-* `fn`: The function to be called when the form is submitted or button pressed. When the function is called, it will receive the previous state of the form (initially the `initialState` that you pass, subsequently its previous return value) as its initial argument, followed by the arguments that a form action normally receives.
-* `initialState`: The value you want the state to be initially. It can be any serializable value. This argument is ignored after the action is first invoked.
-* **optional** `permalink`: A string containing the unique page URL that this form modifies. For use on pages with dynamic content (eg: feeds) in conjunction with progressive enhancement: if `fn` is a [server function](/reference/rsc/server-functions) and the form is submitted before the JavaScript bundle loads, the browser will navigate to the specified permalink URL, rather than the current page's URL. Ensure that the same form component is rendered on the destination page (including the same action `fn` and `permalink`) so that React knows how to pass the state through. Once the form has been hydrated, this parameter has no effect.
+*   `fn`: A função a ser chamada quando o formulário é enviado ou o botão pressionado. Quando a função for chamada, ela receberá o `state` anterior do formulário (inicialmente o `initialState` que você passa, subsequentemente seu valor de retorno anterior) como seu argumento inicial, seguido pelos argumentos que uma ação de formulário normalmente recebe.
+*   `initialState`: O valor que você deseja que o `state` seja inicialmente. Pode ser qualquer valor serializável. Este argumento é ignorado após a ação ser invocada pela primeira vez.
+*   **opcional** `permalink`: Uma string contendo a URL exclusiva da página que este formulário modifica. Para uso em páginas com conteúdo dinâmico (ex: feeds) em conjunto com o aprimoramento progressivo: se `fn` é uma [função de servidor](/reference/rsc/server-functions) e o formulário é enviado antes que o bundle JavaScript seja carregado, o navegador navegará para a URL `permalink` especificada, em vez da URL da página atual. Certifique-se de que o mesmo componente de formulário seja renderizado na página de destino (incluindo a mesma ação `fn` e `permalink`) para que o React saiba como passar o `state`. Uma vez que o formulário foi hidratado, este parâmetro não tem efeito.
 
 {/* TODO T164397693: link to serializable values docs once it exists */}
 
-#### Returns {/*returns*/}
+#### Retorna {/*returns*/}
 
-`useActionState` returns an array with the following values:
+`useActionState` retorna uma array com os seguintes valores:
 
-1. The current state. During the first render, it will match the `initialState` you have passed. After the action is invoked, it will match the value returned by the action.
-2. A new action that you can pass as the `action` prop to your `form` component or `formAction` prop to any `button` component within the form. The action can also be called manually within [`startTransition`](/reference/react/startTransition).
-3. The `isPending` flag that tells you whether there is a pending Transition.
+1.  O `state` atual. Durante a primeira renderização, ele corresponderá ao `initialState` que você passou. Após a ação ser invocada, ele corresponderá ao valor retornado pela ação.
+2.  Uma nova ação que você pode passar como a prop `action` para seu componente `form` ou a prop `formAction` para qualquer componente `button` dentro do formulário. A ação também pode ser chamada manualmente dentro de [`startTransition`](/reference/react/startTransition).
+3.  O `flag` `isPending` que diz se há uma Transition pendente.
 
-#### Caveats {/*caveats*/}
+#### Ressalvas {/*caveats*/}
 
-* When used with a framework that supports React Server Components, `useActionState` lets you make forms interactive before JavaScript has executed on the client. When used without Server Components, it is equivalent to component local state.
-* The function passed to `useActionState` receives an extra argument, the previous or initial state, as its first argument. This makes its signature different than if it were used directly as a form action without using `useActionState`.
+*   Quando usado com um framework que suporta React Server Components, `useActionState` permite que você torne os formulários interativos antes que o JavaScript tenha sido executado no cliente. Quando usado sem Server Components, é equivalente ao `state` local do componente.
+*   A função passada para `useActionState` recebe um argumento extra, o `state` anterior ou inicial, como seu primeiro argumento. Isso torna sua assinatura diferente do que seria se fosse usado diretamente como uma ação de formulário sem usar `useActionState`.
 
 ---
 
-## Usage {/*usage*/}
+## Uso {/*usage*/}
 
-### Using information returned by a form action {/*using-information-returned-by-a-form-action*/}
+### Usando as informações retornadas por uma ação de formulário {/*using-information-returned-by-a-form-action*/}
 
-Call `useActionState` at the top level of your component to access the return value of an action from the last time a form was submitted.
+Chame `useActionState` no topo do seu componente para acessar o valor de retorno de uma ação da última vez que um formulário foi enviado.
 
 ```js [[1, 5, "state"], [2, 5, "formAction"], [3, 5, "action"], [4, 5, "null"], [2, 8, "formAction"]]
 import { useActionState } from 'react';
@@ -99,15 +110,15 @@ function MyComponent() {
 }
 ```
 
-`useActionState` returns an array with the following items:
+`useActionState` retorna uma array com os seguintes itens:
 
-1. The <CodeStep step={1}>current state</CodeStep> of the form, which is initially set to the <CodeStep step={4}>initial state</CodeStep> you provided, and after the form is submitted is set to the return value of the <CodeStep step={3}>action</CodeStep> you provided.
-2. A <CodeStep step={2}>new action</CodeStep> that you pass to `<form>` as its `action` prop or call manually within `startTransition`.
-3. A <CodeStep step={1}>pending state</CodeStep> that you can utilise while your action is processing.
+1.  O <CodeStep step={1}>current state</CodeStep> do formulário, que é inicialmente definido para o <CodeStep step={4}>initial state</CodeStep> que você forneceu e, após o formulário ser enviado, é definido para o valor de retorno da <CodeStep step={3}>action</CodeStep> que você forneceu.
+2.  Uma <CodeStep step={2}>nova action</CodeStep> que você passa para `<form>` como sua prop `action` ou chama manualmente dentro de `startTransition`.
+3.  Um <CodeStep step={1}>pending state</CodeStep> que você pode utilizar enquanto sua action está processando.
 
-When the form is submitted, the <CodeStep step={3}>action</CodeStep> function that you provided will be called. Its return value will become the new <CodeStep step={1}>current state</CodeStep> of the form.
+Quando o formulário for enviado, a função <CodeStep step={3}>action</CodeStep> que você forneceu será chamada. Seu valor de retorno se tornará o novo <CodeStep step={1}>current state</CodeStep> do formulário.
 
-The <CodeStep step={3}>action</CodeStep> that you provide will also receive a new first argument, namely the <CodeStep step={1}>current state</CodeStep> of the form. The first time the form is submitted, this will be the <CodeStep step={4}>initial state</CodeStep> you provided, while with subsequent submissions, it will be the return value from the last time the action was called. The rest of the arguments are the same as if `useActionState` had not been used.
+A <CodeStep step={3}>action</CodeStep> que você fornece também receberá um novo primeiro argumento, ou seja, o <CodeStep step={1}>current state</CodeStep> do formulário. A primeira vez que o formulário for enviado, este será o <CodeStep step={4}>initial state</CodeStep> que você forneceu, enquanto com envios subsequentes, será o valor de retorno da última vez que a ação foi chamada. O restante dos argumentos é o mesmo de se `useActionState` não tivesse sido usado.
 
 ```js [[3, 1, "action"], [1, 1, "currentState"]]
 function action(currentState, formData) {
@@ -116,11 +127,11 @@ function action(currentState, formData) {
 }
 ```
 
-<Recipes titleText="Display information after submitting a form" titleId="display-information-after-submitting-a-form">
+<Recipes titleText="Exibir informações após enviar um formulário" titleId="display-information-after-submitting-a-form">
 
-#### Display form errors {/*display-form-errors*/}
+#### Exibir erros de formulário {/*display-form-errors*/}
 
-To display messages such as an error message or toast that's returned by a Server Function, wrap the action in a call to `useActionState`.
+Para exibir mensagens como uma mensagem de erro ou toast que é retornado por uma Server Function, envolva a ação em uma chamada para `useActionState`.
 
 <Sandpack>
 
@@ -182,9 +193,9 @@ form button {
 
 <Solution />
 
-#### Display structured information after submitting a form {/*display-structured-information-after-submitting-a-form*/}
+#### Exibir informações estruturadas após enviar um formulário {/*display-structured-information-after-submitting-a-form*/}
 
-The return value from a Server Function can be any serializable value. For example, it could be an object that includes a boolean indicating whether the action was successful, an error message, or updated information.
+O valor de retorno de uma Server Function pode ser qualquer valor serializável. Por exemplo, pode ser um objeto que inclui um booleano indicando se a ação foi bem-sucedida, uma mensagem de erro ou informações atualizadas.
 
 <Sandpack>
 
@@ -259,11 +270,11 @@ form button {
 
 </Recipes>
 
-## Troubleshooting {/*troubleshooting*/}
+## Solução de problemas {/*troubleshooting*/}
 
-### My action can no longer read the submitted form data {/*my-action-can-no-longer-read-the-submitted-form-data*/}
+### Minha ação não pode mais ler os dados do formulário enviado {/*my-action-can-no-longer-read-the-submitted-form-data*/}
 
-When you wrap an action with `useActionState`, it gets an extra argument *as its first argument*. The submitted form data is therefore its *second* argument instead of its first as it would usually be. The new first argument that gets added is the current state of the form.
+Quando você encapsula uma ação com `useActionState`, ele recebe um argumento extra *como seu primeiro argumento*. Os dados do formulário enviado são, portanto, seu *segundo* argumento em vez de seu primeiro, como normalmente seria. O novo primeiro argumento que é adicionado é o `state` atual do formulário.
 
 ```js
 function action(currentState, formData) {
