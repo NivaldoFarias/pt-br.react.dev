@@ -1,499 +1,4 @@
----
-title: Extracting State Logic into a Reducer
----
-
-<Intro>
-
-Components with many state updates spread across many event handlers can get overwhelming. For these cases, you can consolidate all the state update logic outside your component in a single function, called a _reducer._
-
-</Intro>
-
-<YouWillLearn>
-
-- What a reducer function is
-- How to refactor `useState` to `useReducer`
-- When to use a reducer
-- How to write one well
-
-</YouWillLearn>
-
-## Consolidate state logic with a reducer {/*consolidate-state-logic-with-a-reducer*/}
-
-As your components grow in complexity, it can get harder to see at a glance all the different ways in which a component's state gets updated. For example, the `TaskApp` component below holds an array of `tasks` in state and uses three different event handlers to add, remove, and edit tasks:
-
-<Sandpack>
-
-```js src/App.js
-import { useState } from 'react';
-import AddTask from './AddTask.js';
-import TaskList from './TaskList.js';
-
-export default function TaskApp() {
-  const [tasks, setTasks] = useState(initialTasks);
-
-  function handleAddTask(text) {
-    setTasks([
-      ...tasks,
-      {
-        id: nextId++,
-        text: text,
-        done: false,
-      },
-    ]);
-  }
-
-  function handleChangeTask(task) {
-    setTasks(
-      tasks.map((t) => {
-        if (t.id === task.id) {
-          return task;
-        } else {
-          return t;
-        }
-      })
-    );
-  }
-
-  function handleDeleteTask(taskId) {
-    setTasks(tasks.filter((t) => t.id !== taskId));
-  }
-
-  return (
-    <>
-      <h1>Prague itinerary</h1>
-      <AddTask onAddTask={handleAddTask} />
-      <TaskList
-        tasks={tasks}
-        onChangeTask={handleChangeTask}
-        onDeleteTask={handleDeleteTask}
-      />
-    </>
-  );
-}
-
-let nextId = 3;
-const initialTasks = [
-  {id: 0, text: 'Visit Kafka Museum', done: true},
-  {id: 1, text: 'Watch a puppet show', done: false},
-  {id: 2, text: 'Lennon Wall pic', done: false},
-];
-```
-
-```js src/AddTask.js hidden
-import { useState } from 'react';
-
-export default function AddTask({onAddTask}) {
-  const [text, setText] = useState('');
-  return (
-    <>
-      <input
-        placeholder="Add task"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
-      <button
-        onClick={() => {
-          setText('');
-          onAddTask(text);
-        }}>
-        Add
-      </button>
-    </>
-  );
-}
-```
-
-```js src/TaskList.js hidden
-import { useState } from 'react';
-
-export default function TaskList({tasks, onChangeTask, onDeleteTask}) {
-  return (
-    <ul>
-      {tasks.map((task) => (
-        <li key={task.id}>
-          <Task task={task} onChange={onChangeTask} onDelete={onDeleteTask} />
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function Task({task, onChange, onDelete}) {
-  const [isEditing, setIsEditing] = useState(false);
-  let taskContent;
-  if (isEditing) {
-    taskContent = (
-      <>
-        <input
-          value={task.text}
-          onChange={(e) => {
-            onChange({
-              ...task,
-              text: e.target.value,
-            });
-          }}
-        />
-        <button onClick={() => setIsEditing(false)}>Save</button>
-      </>
-    );
-  } else {
-    taskContent = (
-      <>
-        {task.text}
-        <button onClick={() => setIsEditing(true)}>Edit</button>
-      </>
-    );
-  }
-  return (
-    <label>
-      <input
-        type="checkbox"
-        checked={task.done}
-        onChange={(e) => {
-          onChange({
-            ...task,
-            done: e.target.checked,
-          });
-        }}
-      />
-      {taskContent}
-      <button onClick={() => onDelete(task.id)}>Delete</button>
-    </label>
-  );
-}
-```
-
-```css
-button {
-  margin: 5px;
-}
-li {
-  list-style-type: none;
-}
-ul,
-li {
-  margin: 0;
-  padding: 0;
-}
-```
-
-</Sandpack>
-
-Each of its event handlers calls `setTasks` in order to update the state. As this component grows, so does the amount of state logic sprinkled throughout it. To reduce this complexity and keep all your logic in one easy-to-access place, you can move that state logic into a single function outside your component, **called a "reducer".**
-
-Reducers are a different way to handle state. You can migrate from `useState` to `useReducer` in three steps:
-
-1. **Move** from setting state to dispatching actions.
-2. **Write** a reducer function.
-3. **Use** the reducer from your component.
-
-### Step 1: Move from setting state to dispatching actions {/*step-1-move-from-setting-state-to-dispatching-actions*/}
-
-Your event handlers currently specify _what to do_ by setting state:
-
 ```js
-function handleAddTask(text) {
-  setTasks([
-    ...tasks,
-    {
-      id: nextId++,
-      text: text,
-      done: false,
-    },
-  ]);
-}
-
-function handleChangeTask(task) {
-  setTasks(
-    tasks.map((t) => {
-      if (t.id === task.id) {
-        return task;
-      } else {
-        return t;
-      }
-    })
-  );
-}
-
-function handleDeleteTask(taskId) {
-  setTasks(tasks.filter((t) => t.id !== taskId));
-}
-```
-
-Remove all the state setting logic. What you are left with are three event handlers:
-
-- `handleAddTask(text)` is called when the user presses "Add".
-- `handleChangeTask(task)` is called when the user toggles a task or presses "Save".
-- `handleDeleteTask(taskId)` is called when the user presses "Delete".
-
-Managing state with reducers is slightly different from directly setting state. Instead of telling React "what to do" by setting state, you specify "what the user just did" by dispatching "actions" from your event handlers. (The state update logic will live elsewhere!) So instead of "setting `tasks`" via an event handler, you're dispatching an "added/changed/deleted a task" action. This is more descriptive of the user's intent.
-
-```js
-function handleAddTask(text) {
-  dispatch({
-    type: 'added',
-    id: nextId++,
-    text: text,
-  });
-}
-
-function handleChangeTask(task) {
-  dispatch({
-    type: 'changed',
-    task: task,
-  });
-}
-
-function handleDeleteTask(taskId) {
-  dispatch({
-    type: 'deleted',
-    id: taskId,
-  });
-}
-```
-
-The object you pass to `dispatch` is called an "action":
-
-```js {3-7}
-function handleDeleteTask(taskId) {
-  dispatch(
-    // "action" object:
-    {
-      type: 'deleted',
-      id: taskId,
-    }
-  );
-}
-```
-
-It is a regular JavaScript object. You decide what to put in it, but generally it should contain the minimal information about _what happened_. (You will add the `dispatch` function itself in a later step.)
-
-<Note>
-
-An action object can have any shape.
-
-By convention, it is common to give it a string `type` that describes what happened, and pass any additional information in other fields. The `type` is specific to a component, so in this example either `'added'` or `'added_task'` would be fine. Choose a name that says what happened!
-
-```js
-dispatch({
-  // specific to component
-  type: 'what_happened',
-  // other fields go here
-});
-```
-
-</Note>
-
-### Step 2: Write a reducer function {/*step-2-write-a-reducer-function*/}
-
-A reducer function is where you will put your state logic. It takes two arguments, the current state and the action object, and it returns the next state:
-
-```js
-function yourReducer(state, action) {
-  // return next state for React to set
-}
-```
-
-React will set the state to what you return from the reducer.
-
-To move your state setting logic from your event handlers to a reducer function in this example, you will:
-
-1. Declare the current state (`tasks`) as the first argument.
-2. Declare the `action` object as the second argument.
-3. Return the _next_ state from the reducer (which React will set the state to).
-
-Here is all the state setting logic migrated to a reducer function:
-
-```js
-function tasksReducer(tasks, action) {
-  if (action.type === 'added') {
-    return [
-      ...tasks,
-      {
-        id: action.id,
-        text: action.text,
-        done: false,
-      },
-    ];
-  } else if (action.type === 'changed') {
-    return tasks.map((t) => {
-      if (t.id === action.task.id) {
-        return action.task;
-      } else {
-        return t;
-      }
-    });
-  } else if (action.type === 'deleted') {
-    return tasks.filter((t) => t.id !== action.id);
-  } else {
-    throw Error('Unknown action: ' + action.type);
-  }
-}
-```
-
-Because the reducer function takes state (`tasks`) as an argument, you can **declare it outside of your component.** This decreases the indentation level and can make your code easier to read.
-
-<Note>
-
-The code above uses if/else statements, but it's a convention to use [switch statements](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/switch) inside reducers. The result is the same, but it can be easier to read switch statements at a glance.
-
-We'll be using them throughout the rest of this documentation like so:
-
-```js
-function tasksReducer(tasks, action) {
-  switch (action.type) {
-    case 'added': {
-      return [
-        ...tasks,
-        {
-          id: action.id,
-          text: action.text,
-          done: false,
-        },
-      ];
-    }
-    case 'changed': {
-      return tasks.map((t) => {
-        if (t.id === action.task.id) {
-          return action.task;
-        } else {
-          return t;
-        }
-      });
-    }
-    case 'deleted': {
-      return tasks.filter((t) => t.id !== action.id);
-    }
-    default: {
-      throw Error('Unknown action: ' + action.type);
-    }
-  }
-}
-```
-
-We recommend wrapping each `case` block into the `{` and `}` curly braces so that variables declared inside of different `case`s don't clash with each other. Also, a `case` should usually end with a `return`. If you forget to `return`, the code will "fall through" to the next `case`, which can lead to mistakes!
-
-If you're not yet comfortable with switch statements, using if/else is completely fine.
-
-</Note>
-
-<DeepDive>
-
-#### Why are reducers called this way? {/*why-are-reducers-called-this-way*/}
-
-Although reducers can "reduce" the amount of code inside your component, they are actually named after the [`reduce()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce) operation that you can perform on arrays.
-
-The `reduce()` operation lets you take an array and "accumulate" a single value out of many:
-
-```
-const arr = [1, 2, 3, 4, 5];
-const sum = arr.reduce(
-  (result, number) => result + number
-); // 1 + 2 + 3 + 4 + 5
-```
-
-The function you pass to `reduce` is known as a "reducer". It takes the _result so far_ and the _current item,_ then it returns the _next result._ React reducers are an example of the same idea: they take the _state so far_ and the _action_, and return the _next state._ In this way, they accumulate actions over time into state.
-
-You could even use the `reduce()` method with an `initialState` and an array of `actions` to calculate the final state by passing your reducer function to it:
-
-<Sandpack>
-
-```js src/index.js active
-import tasksReducer from './tasksReducer.js';
-
-let initialState = [];
-let actions = [
-  {type: 'added', id: 1, text: 'Visit Kafka Museum'},
-  {type: 'added', id: 2, text: 'Watch a puppet show'},
-  {type: 'deleted', id: 1},
-  {type: 'added', id: 3, text: 'Lennon Wall pic'},
-];
-
-let finalState = actions.reduce(tasksReducer, initialState);
-
-const output = document.getElementById('output');
-output.textContent = JSON.stringify(finalState, null, 2);
-```
-
-```js src/tasksReducer.js
-export default function tasksReducer(tasks, action) {
-  switch (action.type) {
-    case 'added': {
-      return [
-        ...tasks,
-        {
-          id: action.id,
-          text: action.text,
-          done: false,
-        },
-      ];
-    }
-    case 'changed': {
-      return tasks.map((t) => {
-        if (t.id === action.task.id) {
-          return action.task;
-        } else {
-          return t;
-        }
-      });
-    }
-    case 'deleted': {
-      return tasks.filter((t) => t.id !== action.id);
-    }
-    default: {
-      throw Error('Unknown action: ' + action.type);
-    }
-  }
-}
-```
-
-```html public/index.html
-<pre id="output"></pre>
-```
-
-</Sandpack>
-
-You probably won't need to do this yourself, but this is similar to what React does!
-
-</DeepDive>
-
-### Step 3: Use the reducer from your component {/*step-3-use-the-reducer-from-your-component*/}
-
-Finally, you need to hook up the `tasksReducer` to your component. Import the `useReducer` Hook from React:
-
-```js
-import { useReducer } from 'react';
-```
-
-Then you can replace `useState`:
-
-```js
-const [tasks, setTasks] = useState(initialTasks);
-```
-
-with `useReducer` like so:
-
-```js
-const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
-```
-
-The `useReducer` Hook is similar to `useState`—you must pass it an initial state and it returns a stateful value and a way to set state (in this case, the dispatch function). But it's a little different.
-
-The `useReducer` Hook takes two arguments:
-
-1. A reducer function
-2. An initial state
-
-And it returns:
-
-1. A stateful value
-2. A dispatch function (to "dispatch" user actions to the reducer)
-
-Now it's fully wired up! Here, the reducer is declared at the bottom of the component file:
-
-<Sandpack>
-
-```js src/App.js
 import { useReducer } from 'react';
 import AddTask from './AddTask.js';
 import TaskList from './TaskList.js';
@@ -658,6 +163,99 @@ function Task({task, onChange, onDelete}) {
 }
 ```
 
+</Sandpack>
+
+>Observação: no exemplo acima, o redutor foi declarado dentro do mesmo arquivo que o componente. Em aplicações maiores, você pode querer movê-lo para um arquivo separado.
+
+Agora, em vez de chamar `setTasks` de dentro de seus manipuladores de eventos, eles acionam ações como `dispatch({ type: 'added', id: nextId++, text: text })`. O redutor então recebe a ação e o estado atual, computa o próximo estado e React atualiza a UI. Todo o estado é consolidado em uma única função, o que torna mais fácil de entender como o estado é alterado.
+
+## Quando usar um redutor {/*when-to-use-a-reducer*/}
+
+Redutores são úteis, mas talvez não sejam apropriados para todos os componentes.
+
+**Use um redutor se:**
+
+*   Você tem uma lógica de atualização de estado complexa.
+*   O próximo estado depende do estado anterior.
+*   Você quer otimizar o desempenho porque uma das suas ações faz uma operação cara.
+*   Você está se sentindo confuso sobre como o estado está sendo atualizado.
+
+**Se seu estado de componentes consistir apenas em alguns pedaços de dados e não tiver um comportamento complexo, pode ser mais simples usar `useState`.**
+
+Por exemplo, talvez você não precise de um redutor para este componente:
+
+```js
+function MyComponent() {
+  const [name, setName] = useState('');
+  const [age, setAge] = useState(0);
+  // ...
+```
+
+Ao implementar um redutor, você está trocando alguma simplicidade pela flexibilidade e controle extra.
+
+## Escrevendo um redutor bem {/*writing-a-reducer-well*/}
+
+Aqui estão algumas dicas sobre como escrever redutores:
+
+*   **Os redutores devem ser funções puras.** Como as funções puras, os redutores devem "calcular" o próximo estado com base no `state` e nos `action`s. Eles devem ler os valores de `state` e `action` (e seus argumentos) e não fazer mais nada. Em particular:
+    *   Não modifique os objetos de `state` ou `action`—trate-os como somente leitura.
+    *   Não chame APIs (por exemplo, `fetch`).
+    *   Não chame funções que tenham efeitos colaterais (por exemplo, `console.log()`).
+    *   Não chame funções que não sejam puras (por exemplo, `Date.now()` ou `Math.random()`).
+*   **O manipulador de cada ação deve retornar o estado.** Se uma ação não for relevante para que o estado seja atualizado, retorne o estado atual sem alterações. Caso contrário, retorne o *novo* estado.
+*   **O estado não precisa ser um objeto.** No exemplo acima, ele era um array. Ele pode ser um número, uma string ou qualquer tipo de dados JavaScript.
+*   **Cada caso pode ter um nome de ação diferente.** Há duas abordagens comuns:
+    *   Ações individuais, como `"added"`, `"changed"` e `"deleted"` no exemplo acima.
+    *   Uma ação geral, como `"update"`, e informações sobre como atualizar o estado nos `action`:  Por exemplo, `dispatch({ type: 'update', payload: { id: 1, text: 'Olá' } })`.
+    *   Você tem controle total sobre a forma das _ações_ que sua aplicação envia e sobre a forma do _estado_ que seu redutor retorna. Escolha o que for mais adequado para suas necessidades.
+
+Usar um redutor pode ser um ótimo padrão para lidar com atualizações complexas de estado.
+```js
+function Task({task, onChange, onDelete}) {
+  const [isEditing, setIsEditing] = useState(false);
+  let taskContent;
+  if (isEditing) {
+    taskContent = (
+      <>
+        <input
+          value={task.text}
+          onChange={(e) => {
+            onChange({
+              ...task,
+              text: e.target.value,
+            });
+          }}
+        />
+        <button onClick={() => setIsEditing(false)}>Salvar</button>
+      </>
+    );
+  } else {
+    taskContent = (
+      <>
+        {task.text}
+        <button onClick={() => setIsEditing(true)}>Editar</button>
+      </>
+    );
+  }
+  return (
+    <label>
+      <input
+        type="checkbox"
+        checked={task.done}
+        onChange={(e) => {
+          onChange({
+            ...task,
+            done: e.target.checked,
+          });
+        }}
+      />
+      {taskContent}
+      <button onClick={() => onDelete(task.id)}>Deletar</button>
+    </label>
+  );
+}
+```
+
 ```css
 button {
   margin: 5px;
@@ -674,7 +272,7 @@ li {
 
 </Sandpack>
 
-If you want, you can even move the reducer to a different file:
+Se quiser, você pode até mesmo mover o **reducer** para um arquivo diferente:
 
 <Sandpack>
 
@@ -711,7 +309,7 @@ export default function TaskApp() {
 
   return (
     <>
-      <h1>Prague itinerary</h1>
+      <h1>Itinerário de Praga</h1>
       <AddTask onAddTask={handleAddTask} />
       <TaskList
         tasks={tasks}
@@ -724,9 +322,9 @@ export default function TaskApp() {
 
 let nextId = 3;
 const initialTasks = [
-  {id: 0, text: 'Visit Kafka Museum', done: true},
-  {id: 1, text: 'Watch a puppet show', done: false},
-  {id: 2, text: 'Lennon Wall pic', done: false},
+  {id: 0, text: 'Visitar o Museu Kafka', done: true},
+  {id: 1, text: 'Assistir a um show de fantoches', done: false},
+  {id: 2, text: 'Foto no muro de Lennon', done: false},
 ];
 ```
 
@@ -770,7 +368,7 @@ export default function AddTask({onAddTask}) {
   return (
     <>
       <input
-        placeholder="Add task"
+        placeholder="Adicionar tarefa"
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
@@ -779,7 +377,7 @@ export default function AddTask({onAddTask}) {
           setText('');
           onAddTask(text);
         }}>
-        Add
+        Adicionar
       </button>
     </>
   );
@@ -862,30 +460,30 @@ li {
 
 </Sandpack>
 
-Component logic can be easier to read when you separate concerns like this. Now the event handlers only specify _what happened_ by dispatching actions, and the reducer function determines _how the state updates_ in response to them.
+A lógica do componente pode ser mais fácil de ler quando você separa as preocupações dessa maneira. Agora, os manipuladores de eventos especificam apenas _o que aconteceu_ ao despachar ações, e a função redutora determina _como o estado é atualizado_ em resposta a elas.
 
-## Comparing `useState` and `useReducer` {/*comparing-usestate-and-usereducer*/}
+## Comparando `useState` e `useReducer` {/*comparing-usestate-and-usereducer*/}
 
-Reducers are not without downsides! Here's a few ways you can compare them:
+Redutores não são isentos de desvantagens! Aqui estão algumas maneiras de compará-los:
 
-- **Code size:** Generally, with `useState` you have to write less code upfront. With `useReducer`, you have to write both a reducer function _and_ dispatch actions. However, `useReducer` can help cut down on the code if many event handlers modify state in a similar way.
-- **Readability:** `useState` is very easy to read when the state updates are simple. When they get more complex, they can bloat your component's code and make it difficult to scan. In this case, `useReducer` lets you cleanly separate the _how_ of update logic from the _what happened_ of event handlers.
-- **Debugging:** When you have a bug with `useState`, it can be difficult to tell _where_ the state was set incorrectly, and _why_. With `useReducer`, you can add a console log into your reducer to see every state update, and _why_ it happened (due to which `action`). If each `action` is correct, you'll know that the mistake is in the reducer logic itself. However, you have to step through more code than with `useState`.
-- **Testing:** A reducer is a pure function that doesn't depend on your component. This means that you can export and test it separately in isolation. While generally it's best to test components in a more realistic environment, for complex state update logic it can be useful to assert that your reducer returns a particular state for a particular initial state and action.
-- **Personal preference:** Some people like reducers, others don't. That's okay. It's a matter of preference. You can always convert between `useState` and `useReducer` back and forth: they are equivalent!
+- **Tamanho do código:** Geralmente, com `useState`, você precisa escrever menos código antecipadamente. Com `useReducer`, você precisa escrever tanto uma função redutora _quanto_ despachar ações. No entanto, `useReducer` pode ajudar a reduzir o código se muitos manipuladores de eventos modificam o estado de maneira semelhante.
+- **Legibilidade:** `useState` é muito fácil de ler quando as atualizações de estado são simples. Quando eles ficam mais complexos, eles podem inflar o código do seu componente e dificultar a verificação. Nesse caso, `useReducer` permite que você separe de forma limpa o _como_ da lógica de atualização do _o que aconteceu_ dos manipuladores de eventos.
+- **Depuração:** Quando você tem um erro com `useState`, pode ser difícil dizer _onde_ o estado foi definido incorretamente e _por quê_. Com `useReducer`, você pode adicionar um log de console em seu redutor para ver cada atualização de estado e _por que_ ela aconteceu (devido a qual `ação`). Se cada `ação` estiver correta, você saberá que o erro está na própria lógica do redutor. No entanto, você precisa percorrer mais código do que com `useState`.
+- **Teste:** Um redutor é uma função pura que não depende do seu componente. Isso significa que você pode exportá-lo e testá-lo separadamente em isolamento. Embora geralmente seja melhor testar componentes em um ambiente mais realista, para lógica complexa de atualização de estado, pode ser útil afirmar que seu redutor retorna um estado particular para um estado inicial e ação específicos.
+- **Preferência pessoal:** Algumas pessoas gostam de redutores, outras não. Tudo bem. É uma questão de preferência. Você sempre pode converter entre `useState` e `useReducer` para frente e para trás: eles são equivalentes!
 
-We recommend using a reducer if you often encounter bugs due to incorrect state updates in some component, and want to introduce more structure to its code. You don't have to use reducers for everything: feel free to mix and match! You can even `useState` and `useReducer` in the same component.
+Recomendamos o uso de um redutor se você frequentemente encontrar erros devido a atualizações incorretas de estado em algum componente e quiser introduzir mais estrutura ao seu código. Você não precisa usar redutores para tudo: sinta-se à vontade para misturar e combinar! Você pode até mesmo usar `useState` e `useReducer` no mesmo componente.
 
-## Writing reducers well {/*writing-reducers-well*/}
+## Escrevendo redutores bem {/*writing-reducers-well*/}
 
-Keep these two tips in mind when writing reducers:
+Tenha estas duas dicas em mente ao escrever redutores:
 
-- **Reducers must be pure.** Similar to [state updater functions](/learn/queueing-a-series-of-state-updates), reducers run during rendering! (Actions are queued until the next render.) This means that reducers [must be pure](/learn/keeping-components-pure)—same inputs always result in the same output. They should not send requests, schedule timeouts, or perform any side effects (operations that impact things outside the component). They should update [objects](/learn/updating-objects-in-state) and [arrays](/learn/updating-arrays-in-state) without mutations.
-- **Each action describes a single user interaction, even if that leads to multiple changes in the data.** For example, if a user presses "Reset" on a form with five fields managed by a reducer, it makes more sense to dispatch one `reset_form` action rather than five separate `set_field` actions. If you log every action in a reducer, that log should be clear enough for you to reconstruct what interactions or responses happened in what order. This helps with debugging!
+- **Redutores devem ser puros.** Semelhante às [funções atualizadoras de estado](/learn/queueing-a-series-of-state-updates), os redutores são executados durante a renderização! (As ações são enfileiradas até a próxima renderização.) Isso significa que os redutores [devem ser puros](/learn/keeping-components-pure) — as mesmas entradas sempre resultam na mesma saída. Eles não devem enviar solicitações, agendar timeouts ou realizar quaisquer efeitos colaterais (operações que afetam coisas fora do componente). Eles devem atualizar [objetos](/learn/updating-objects-in-state) e [arrays](/learn/updating-arrays-in-state) sem modificações.
+- **Cada ação descreve uma única interação do usuário, mesmo que isso leve a múltiplas alterações nos dados.** Por exemplo, se um usuário pressiona "Redefinir" em um formulário com cinco campos gerenciados por um redutor, faz mais sentido despachar uma ação `reset_form` em vez de cinco ações `set_field` separadas. Se você registrar cada ação em um redutor, esse log deve ser claro o suficiente para que você possa reconstruir quais interações ou respostas aconteceram e em que ordem. Isso ajuda na depuração!
 
-## Writing concise reducers with Immer {/*writing-concise-reducers-with-immer*/}
+## Escrevendo redutores concisos com Immer {/*writing-concise-reducers-with-immer*/}
 
-Just like with [updating objects](/learn/updating-objects-in-state#write-concise-update-logic-with-immer) and [arrays](/learn/updating-arrays-in-state#write-concise-update-logic-with-immer) in regular state, you can use the Immer library to make reducers more concise. Here, [`useImmerReducer`](https://github.com/immerjs/use-immer#useimmerreducer) lets you mutate the state with `push` or `arr[i] =` assignment:
+Assim como com [a atualização de objetos](/learn/updating-objects-in-state#write-concise-update-logic-with-immer) e [arrays](/learn/updating-arrays-in-state#write-concise-update-logic-with-immer) no estado regular, você pode usar a biblioteca Immer para tornar os redutores mais concisos. Aqui, [`useImmerReducer`](https://github.com/immerjs/use-immer#useimmerreducer) permite que você modifique o estado com atribuição `push` ou `arr[i] =`:
 
 <Sandpack>
 
@@ -945,7 +543,7 @@ export default function TaskApp() {
 
   return (
     <>
-      <h1>Prague itinerary</h1>
+      <h1>Itinerário de Praga</h1>
       <AddTask onAddTask={handleAddTask} />
       <TaskList
         tasks={tasks}
@@ -958,9 +556,9 @@ export default function TaskApp() {
 
 let nextId = 3;
 const initialTasks = [
-  {id: 0, text: 'Visit Kafka Museum', done: true},
-  {id: 1, text: 'Watch a puppet show', done: false},
-  {id: 2, text: 'Lennon Wall pic', done: false},
+  {id: 0, text: 'Visitar o Museu Kafka', done: true},
+  {id: 1, text: 'Assistir a um show de fantoches', done: false},
+  {id: 2, text: 'Foto no muro de Lennon', done: false},
 ];
 ```
 
@@ -972,7 +570,7 @@ export default function AddTask({onAddTask}) {
   return (
     <>
       <input
-        placeholder="Add task"
+        placeholder="Adicionar tarefa"
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
@@ -981,7 +579,7 @@ export default function AddTask({onAddTask}) {
           setText('');
           onAddTask(text);
         }}>
-        Add
+        Adicionar
       </button>
     </>
   );
@@ -1018,14 +616,14 @@ function Task({task, onChange, onDelete}) {
             });
           }}
         />
-        <button onClick={() => setIsEditing(false)}>Save</button>
+        <button onClick={() => setIsEditing(false)}>Salvar</button>
       </>
     );
   } else {
     taskContent = (
       <>
         {task.text}
-        <button onClick={() => setIsEditing(true)}>Edit</button>
+        <button onClick={() => setIsEditing(true)}>Editar</button>
       </>
     );
   }
@@ -1042,7 +640,7 @@ function Task({task, onChange, onDelete}) {
         }}
       />
       {taskContent}
-      <button onClick={() => onDelete(task.id)}>Delete</button>
+      <button onClick={() => onDelete(task.id)}>Deletar</button>
     </label>
   );
 }
@@ -1082,34 +680,34 @@ li {
 
 </Sandpack>
 
-Reducers must be pure, so they shouldn't mutate state. But Immer provides you with a special `draft` object which is safe to mutate. Under the hood, Immer will create a copy of your state with the changes you made to the `draft`. This is why reducers managed by `useImmerReducer` can mutate their first argument and don't need to return state.
+Redutores devem ser puros, portanto, eles não devem modificar o estado. Mas Immer fornece a você um objeto `draft` especial que é seguro para modificar. Por baixo dos panos, Immer criará uma cópia do seu estado com as alterações que você fez no `draft`. É por isso que os redutores gerenciados por `useImmerReducer` podem modificar seu primeiro argumento e não precisam retornar o estado.
 
 <Recap>
 
-- To convert from `useState` to `useReducer`:
-  1. Dispatch actions from event handlers.
-  2. Write a reducer function that returns the next state for a given state and action.
-  3. Replace `useState` with `useReducer`.
-- Reducers require you to write a bit more code, but they help with debugging and testing.
-- Reducers must be pure.
-- Each action describes a single user interaction.
-- Use Immer if you want to write reducers in a mutating style.
+- Para converter de `useState` para `useReducer`:
+  1. Despache ações de manipuladores de eventos.
+  2. Escreva uma função redutora que retorna o próximo estado para um determinado estado e ação.
+  3. Substitua `useState` por `useReducer`.
+- Os redutores exigem que você escreva um pouco mais de código, mas eles ajudam na depuração e no teste.
+- Os redutores devem ser puros.
+- Cada ação descreve uma única interação do usuário.
+- Use Immer se você quiser escrever redutores em um estilo modificador.
 
 </Recap>
 
 <Challenges>
 
-#### Dispatch actions from event handlers {/*dispatch-actions-from-event-handlers*/}
+#### Despachar ações de manipuladores de eventos {/*dispatch-actions-from-event-handlers*/}
 
-Currently, the event handlers in `ContactList.js` and `Chat.js` have `// TODO` comments. This is why typing into the input doesn't work, and clicking on the buttons doesn't change the selected recipient.
+Atualmente, os manipuladores de eventos em `ContactList.js` e `Chat.js` têm comentários `// TODO`. É por isso que digitar na entrada não funciona e clicar nos botões não altera o destinatário selecionado.
 
-Replace these two `// TODO`s with the code to `dispatch` the corresponding actions. To see the expected shape and the type of the actions, check the reducer in `messengerReducer.js`. The reducer is already written so you won't need to change it. You only need to dispatch the actions in `ContactList.js` and `Chat.js`.
+Substitua esses dois `// TODO` com o código para `despachar` as ações correspondentes. Para ver o formato esperado e o tipo das ações, verifique o redutor em `messengerReducer.js`. O redutor já está escrito, portanto, você não precisará alterá-lo. Você só precisa despachar as ações em `ContactList.js` e `Chat.js`.
 
 <Hint>
 
-The `dispatch` function is already available in both of these components because it was passed as a prop. So you need to call `dispatch` with the corresponding action object.
+A função `dispatch` já está disponível em ambos os componentes porque foi passada como uma propriedade. Portanto, você precisa chamar `dispatch` com o objeto de ação correspondente.
 
-To check the action object shape, you can look at the reducer and see which `action` fields it expects to see. For example, the `changed_selection` case in the reducer looks like this:
+Para verificar o formato do objeto de ação, você pode olhar para o redutor e ver quais campos `action` ele espera ver. Por exemplo, o caso `changed_selection` no redutor se parece com isto:
 
 ```js
 case 'changed_selection': {
@@ -1120,7 +718,7 @@ case 'changed_selection': {
 }
 ```
 
-This means that your action object should have a `type: 'changed_selection'`. You also see the `action.contactId` being used, so you need to include a `contactId` property into your action.
+Isso significa que o seu objeto de ação deve ter um `type: 'changed_selection'`. Você também vê que `action.contactId` está sendo usado, então você precisa incluir uma propriedade `contactId` na sua ação.
 
 </Hint>
 
@@ -1186,793 +784,7 @@ export function messengerReducer(state, action) {
     }
   }
 }
-```
-
-```js src/ContactList.js
-export default function ContactList({contacts, selectedId, dispatch}) {
-  return (
-    <section className="contact-list">
-      <ul>
-        {contacts.map((contact) => (
-          <li key={contact.id}>
-            <button
-              onClick={() => {
-                // TODO: dispatch changed_selection
-              }}>
-              {selectedId === contact.id ? <b>{contact.name}</b> : contact.name}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-```
-
-```js src/Chat.js
-import { useState } from 'react';
-
-export default function Chat({contact, message, dispatch}) {
-  return (
-    <section className="chat">
-      <textarea
-        value={message}
-        placeholder={'Chat to ' + contact.name}
-        onChange={(e) => {
-          // TODO: dispatch edited_message
-          // (Read the input value from e.target.value)
-        }}
-      />
-      <br />
-      <button>Send to {contact.email}</button>
-    </section>
-  );
-}
-```
-
-```css
-.chat,
-.contact-list {
-  float: left;
-  margin-bottom: 20px;
-}
-ul,
-li {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-li button {
-  width: 100px;
-  padding: 10px;
-  margin-right: 10px;
-}
-textarea {
-  height: 150px;
-}
-```
-
-</Sandpack>
-
-<Solution>
-
-From the reducer code, you can infer that actions need to look like this:
-
-```js
-// When the user presses "Alice"
-dispatch({
-  type: 'changed_selection',
-  contactId: 1,
-});
-
-// When user types "Hello!"
-dispatch({
-  type: 'edited_message',
-  message: 'Hello!',
-});
-```
-
-Here is the example updated to dispatch the corresponding messages:
-
-<Sandpack>
-
-```js src/App.js
-import { useReducer } from 'react';
-import Chat from './Chat.js';
-import ContactList from './ContactList.js';
-import { initialState, messengerReducer } from './messengerReducer';
-
-export default function Messenger() {
-  const [state, dispatch] = useReducer(messengerReducer, initialState);
-  const message = state.message;
-  const contact = contacts.find((c) => c.id === state.selectedId);
-  return (
-    <div>
-      <ContactList
-        contacts={contacts}
-        selectedId={state.selectedId}
-        dispatch={dispatch}
-      />
-      <Chat
-        key={contact.id}
-        message={message}
-        contact={contact}
-        dispatch={dispatch}
-      />
-    </div>
-  );
-}
-
-const contacts = [
-  {id: 0, name: 'Taylor', email: 'taylor@mail.com'},
-  {id: 1, name: 'Alice', email: 'alice@mail.com'},
-  {id: 2, name: 'Bob', email: 'bob@mail.com'},
-];
-```
-
-```js src/messengerReducer.js
-export const initialState = {
-  selectedId: 0,
-  message: 'Hello',
-};
-
-export function messengerReducer(state, action) {
-  switch (action.type) {
-    case 'changed_selection': {
-      return {
-        ...state,
-        selectedId: action.contactId,
-        message: '',
-      };
-    }
-    case 'edited_message': {
-      return {
-        ...state,
-        message: action.message,
-      };
-    }
-    default: {
-      throw Error('Unknown action: ' + action.type);
-    }
-  }
-}
-```
-
-```js src/ContactList.js
-export default function ContactList({contacts, selectedId, dispatch}) {
-  return (
-    <section className="contact-list">
-      <ul>
-        {contacts.map((contact) => (
-          <li key={contact.id}>
-            <button
-              onClick={() => {
-                dispatch({
-                  type: 'changed_selection',
-                  contactId: contact.id,
-                });
-              }}>
-              {selectedId === contact.id ? <b>{contact.name}</b> : contact.name}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-```
-
-```js src/Chat.js
-import { useState } from 'react';
-
-export default function Chat({contact, message, dispatch}) {
-  return (
-    <section className="chat">
-      <textarea
-        value={message}
-        placeholder={'Chat to ' + contact.name}
-        onChange={(e) => {
-          dispatch({
-            type: 'edited_message',
-            message: e.target.value,
-          });
-        }}
-      />
-      <br />
-      <button>Send to {contact.email}</button>
-    </section>
-  );
-}
-```
-
-```css
-.chat,
-.contact-list {
-  float: left;
-  margin-bottom: 20px;
-}
-ul,
-li {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-li button {
-  width: 100px;
-  padding: 10px;
-  margin-right: 10px;
-}
-textarea {
-  height: 150px;
-}
-```
-
-</Sandpack>
-
-</Solution>
-
-#### Clear the input on sending a message {/*clear-the-input-on-sending-a-message*/}
-
-Currently, pressing "Send" doesn't do anything. Add an event handler to the "Send" button that will:
-
-1. Show an `alert` with the recipient's email and the message.
-2. Clear the message input.
-
-<Sandpack>
-
-```js src/App.js
-import { useReducer } from 'react';
-import Chat from './Chat.js';
-import ContactList from './ContactList.js';
-import { initialState, messengerReducer } from './messengerReducer';
-
-export default function Messenger() {
-  const [state, dispatch] = useReducer(messengerReducer, initialState);
-  const message = state.message;
-  const contact = contacts.find((c) => c.id === state.selectedId);
-  return (
-    <div>
-      <ContactList
-        contacts={contacts}
-        selectedId={state.selectedId}
-        dispatch={dispatch}
-      />
-      <Chat
-        key={contact.id}
-        message={message}
-        contact={contact}
-        dispatch={dispatch}
-      />
-    </div>
-  );
-}
-
-const contacts = [
-  {id: 0, name: 'Taylor', email: 'taylor@mail.com'},
-  {id: 1, name: 'Alice', email: 'alice@mail.com'},
-  {id: 2, name: 'Bob', email: 'bob@mail.com'},
-];
-```
-
-```js src/messengerReducer.js
-export const initialState = {
-  selectedId: 0,
-  message: 'Hello',
-};
-
-export function messengerReducer(state, action) {
-  switch (action.type) {
-    case 'changed_selection': {
-      return {
-        ...state,
-        selectedId: action.contactId,
-        message: '',
-      };
-    }
-    case 'edited_message': {
-      return {
-        ...state,
-        message: action.message,
-      };
-    }
-    default: {
-      throw Error('Unknown action: ' + action.type);
-    }
-  }
-}
-```
-
-```js src/ContactList.js
-export default function ContactList({contacts, selectedId, dispatch}) {
-  return (
-    <section className="contact-list">
-      <ul>
-        {contacts.map((contact) => (
-          <li key={contact.id}>
-            <button
-              onClick={() => {
-                dispatch({
-                  type: 'changed_selection',
-                  contactId: contact.id,
-                });
-              }}>
-              {selectedId === contact.id ? <b>{contact.name}</b> : contact.name}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-```
-
-```js src/Chat.js active
-import { useState } from 'react';
-
-export default function Chat({contact, message, dispatch}) {
-  return (
-    <section className="chat">
-      <textarea
-        value={message}
-        placeholder={'Chat to ' + contact.name}
-        onChange={(e) => {
-          dispatch({
-            type: 'edited_message',
-            message: e.target.value,
-          });
-        }}
-      />
-      <br />
-      <button>Send to {contact.email}</button>
-    </section>
-  );
-}
-```
-
-```css
-.chat,
-.contact-list {
-  float: left;
-  margin-bottom: 20px;
-}
-ul,
-li {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-li button {
-  width: 100px;
-  padding: 10px;
-  margin-right: 10px;
-}
-textarea {
-  height: 150px;
-}
-```
-
-</Sandpack>
-
-<Solution>
-
-There are a couple of ways you could do it in the "Send" button event handler. One approach is to show an alert and then dispatch an `edited_message` action with an empty `message`:
-
-<Sandpack>
-
-```js src/App.js
-import { useReducer } from 'react';
-import Chat from './Chat.js';
-import ContactList from './ContactList.js';
-import { initialState, messengerReducer } from './messengerReducer';
-
-export default function Messenger() {
-  const [state, dispatch] = useReducer(messengerReducer, initialState);
-  const message = state.message;
-  const contact = contacts.find((c) => c.id === state.selectedId);
-  return (
-    <div>
-      <ContactList
-        contacts={contacts}
-        selectedId={state.selectedId}
-        dispatch={dispatch}
-      />
-      <Chat
-        key={contact.id}
-        message={message}
-        contact={contact}
-        dispatch={dispatch}
-      />
-    </div>
-  );
-}
-
-const contacts = [
-  {id: 0, name: 'Taylor', email: 'taylor@mail.com'},
-  {id: 1, name: 'Alice', email: 'alice@mail.com'},
-  {id: 2, name: 'Bob', email: 'bob@mail.com'},
-];
-```
-
-```js src/messengerReducer.js
-export const initialState = {
-  selectedId: 0,
-  message: 'Hello',
-};
-
-export function messengerReducer(state, action) {
-  switch (action.type) {
-    case 'changed_selection': {
-      return {
-        ...state,
-        selectedId: action.contactId,
-        message: '',
-      };
-    }
-    case 'edited_message': {
-      return {
-        ...state,
-        message: action.message,
-      };
-    }
-    default: {
-      throw Error('Unknown action: ' + action.type);
-    }
-  }
-}
-```
-
-```js src/ContactList.js
-export default function ContactList({contacts, selectedId, dispatch}) {
-  return (
-    <section className="contact-list">
-      <ul>
-        {contacts.map((contact) => (
-          <li key={contact.id}>
-            <button
-              onClick={() => {
-                dispatch({
-                  type: 'changed_selection',
-                  contactId: contact.id,
-                });
-              }}>
-              {selectedId === contact.id ? <b>{contact.name}</b> : contact.name}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-```
-
-```js src/Chat.js active
-import { useState } from 'react';
-
-export default function Chat({contact, message, dispatch}) {
-  return (
-    <section className="chat">
-      <textarea
-        value={message}
-        placeholder={'Chat to ' + contact.name}
-        onChange={(e) => {
-          dispatch({
-            type: 'edited_message',
-            message: e.target.value,
-          });
-        }}
-      />
-      <br />
-      <button
-        onClick={() => {
-          alert(`Sending "${message}" to ${contact.email}`);
-          dispatch({
-            type: 'edited_message',
-            message: '',
-          });
-        }}>
-        Send to {contact.email}
-      </button>
-    </section>
-  );
-}
-```
-
-```css
-.chat,
-.contact-list {
-  float: left;
-  margin-bottom: 20px;
-}
-ul,
-li {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-li button {
-  width: 100px;
-  padding: 10px;
-  margin-right: 10px;
-}
-textarea {
-  height: 150px;
-}
-```
-
-</Sandpack>
-
-This works and clears the input when you hit "Send".
-
-However, _from the user's perspective_, sending a message is a different action than editing the field. To reflect that, you could instead create a _new_ action called `sent_message`, and handle it separately in the reducer:
-
-<Sandpack>
-
-```js src/App.js
-import { useReducer } from 'react';
-import Chat from './Chat.js';
-import ContactList from './ContactList.js';
-import { initialState, messengerReducer } from './messengerReducer';
-
-export default function Messenger() {
-  const [state, dispatch] = useReducer(messengerReducer, initialState);
-  const message = state.message;
-  const contact = contacts.find((c) => c.id === state.selectedId);
-  return (
-    <div>
-      <ContactList
-        contacts={contacts}
-        selectedId={state.selectedId}
-        dispatch={dispatch}
-      />
-      <Chat
-        key={contact.id}
-        message={message}
-        contact={contact}
-        dispatch={dispatch}
-      />
-    </div>
-  );
-}
-
-const contacts = [
-  {id: 0, name: 'Taylor', email: 'taylor@mail.com'},
-  {id: 1, name: 'Alice', email: 'alice@mail.com'},
-  {id: 2, name: 'Bob', email: 'bob@mail.com'},
-];
-```
-
-```js src/messengerReducer.js active
-export const initialState = {
-  selectedId: 0,
-  message: 'Hello',
-};
-
-export function messengerReducer(state, action) {
-  switch (action.type) {
-    case 'changed_selection': {
-      return {
-        ...state,
-        selectedId: action.contactId,
-        message: '',
-      };
-    }
-    case 'edited_message': {
-      return {
-        ...state,
-        message: action.message,
-      };
-    }
-    case 'sent_message': {
-      return {
-        ...state,
-        message: '',
-      };
-    }
-    default: {
-      throw Error('Unknown action: ' + action.type);
-    }
-  }
-}
-```
-
-```js src/ContactList.js
-export default function ContactList({contacts, selectedId, dispatch}) {
-  return (
-    <section className="contact-list">
-      <ul>
-        {contacts.map((contact) => (
-          <li key={contact.id}>
-            <button
-              onClick={() => {
-                dispatch({
-                  type: 'changed_selection',
-                  contactId: contact.id,
-                });
-              }}>
-              {selectedId === contact.id ? <b>{contact.name}</b> : contact.name}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-```
-
-```js src/Chat.js active
-import { useState } from 'react';
-
-export default function Chat({contact, message, dispatch}) {
-  return (
-    <section className="chat">
-      <textarea
-        value={message}
-        placeholder={'Chat to ' + contact.name}
-        onChange={(e) => {
-          dispatch({
-            type: 'edited_message',
-            message: e.target.value,
-          });
-        }}
-      />
-      <br />
-      <button
-        onClick={() => {
-          alert(`Sending "${message}" to ${contact.email}`);
-          dispatch({
-            type: 'sent_message',
-          });
-        }}>
-        Send to {contact.email}
-      </button>
-    </section>
-  );
-}
-```
-
-```css
-.chat,
-.contact-list {
-  float: left;
-  margin-bottom: 20px;
-}
-ul,
-li {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-li button {
-  width: 100px;
-  padding: 10px;
-  margin-right: 10px;
-}
-textarea {
-  height: 150px;
-}
-```
-
-</Sandpack>
-
-The resulting behavior is the same. But keep in mind that action types should ideally describe "what the user did" rather than "how you want the state to change". This makes it easier to later add more features.
-
-With either solution, it's important that you **don't** place the `alert` inside a reducer. The reducer should be a pure function--it should only calculate the next state. It should not "do" anything, including displaying messages to the user. That should happen in the event handler. (To help catch mistakes like this, React will call your reducers multiple times in Strict Mode. This is why, if you put an alert in a reducer, it fires twice.)
-
-</Solution>
-
-#### Restore input values when switching between tabs {/*restore-input-values-when-switching-between-tabs*/}
-
-In this example, switching between different recipients always clears the text input:
-
-```js
-case 'changed_selection': {
-  return {
-    ...state,
-    selectedId: action.contactId,
-    message: '' // Clears the input
-  };
-```
-
-This is because you don't want to share a single message draft between several recipients. But it would be better if your app "remembered" a draft for each contact separately, restoring them when you switch contacts.
-
-Your task is to change the way the state is structured so that you remember a separate message draft _per contact_. You would need to make a few changes to the reducer, the initial state, and the components.
-
-<Hint>
-
-You can structure your state like this:
-
-```js
-export const initialState = {
-  selectedId: 0,
-  messages: {
-    0: 'Hello, Taylor', // Draft for contactId = 0
-    1: 'Hello, Alice', // Draft for contactId = 1
-  },
-};
-```
-
-The `[key]: value` [computed property](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#computed_property_names) syntax can help you update the `messages` object:
-
-```js
-{
-  ...state.messages,
-  [id]: message
-}
-```
-
-</Hint>
-
-<Sandpack>
-
-```js src/App.js
-import { useReducer } from 'react';
-import Chat from './Chat.js';
-import ContactList from './ContactList.js';
-import { initialState, messengerReducer } from './messengerReducer';
-
-export default function Messenger() {
-  const [state, dispatch] = useReducer(messengerReducer, initialState);
-  const message = state.message;
-  const contact = contacts.find((c) => c.id === state.selectedId);
-  return (
-    <div>
-      <ContactList
-        contacts={contacts}
-        selectedId={state.selectedId}
-        dispatch={dispatch}
-      />
-      <Chat
-        key={contact.id}
-        message={message}
-        contact={contact}
-        dispatch={dispatch}
-      />
-    </div>
-  );
-}
-
-const contacts = [
-  {id: 0, name: 'Taylor', email: 'taylor@mail.com'},
-  {id: 1, name: 'Alice', email: 'alice@mail.com'},
-  {id: 2, name: 'Bob', email: 'bob@mail.com'},
-];
-```
-
-```js src/messengerReducer.js
-export const initialState = {
-  selectedId: 0,
-  message: 'Hello',
-};
-
-export function messengerReducer(state, action) {
-  switch (action.type) {
-    case 'changed_selection': {
-      return {
-        ...state,
-        selectedId: action.contactId,
-        message: '',
-      };
-    }
-    case 'edited_message': {
-      return {
-        ...state,
-        message: action.message,
-      };
-    }
-    case 'sent_message': {
-      return {
-        ...state,
-        message: '',
-      };
-    }
-    default: {
-      throw Error('Unknown action: ' + action.type);
-    }
-  }
-}
-```
-
-```js src/ContactList.js
+``````js src/ContactList.js
 export default function ContactList({contacts, selectedId, dispatch}) {
   return (
     <section className="contact-list">
@@ -2048,582 +860,3 @@ textarea {
   height: 150px;
 }
 ```
-
-</Sandpack>
-
-<Solution>
-
-You'll need to update the reducer to store and update a separate message draft per contact:
-
-```js
-// When the input is edited
-case 'edited_message': {
-  return {
-    // Keep other state like selection
-    ...state,
-    messages: {
-      // Keep messages for other contacts
-      ...state.messages,
-      // But change the selected contact's message
-      [state.selectedId]: action.message
-    }
-  };
-}
-```
-
-You would also update the `Messenger` component to read the message for the currently selected contact:
-
-```js
-const message = state.messages[state.selectedId];
-```
-
-Here is the complete solution:
-
-<Sandpack>
-
-```js src/App.js
-import { useReducer } from 'react';
-import Chat from './Chat.js';
-import ContactList from './ContactList.js';
-import { initialState, messengerReducer } from './messengerReducer';
-
-export default function Messenger() {
-  const [state, dispatch] = useReducer(messengerReducer, initialState);
-  const message = state.messages[state.selectedId];
-  const contact = contacts.find((c) => c.id === state.selectedId);
-  return (
-    <div>
-      <ContactList
-        contacts={contacts}
-        selectedId={state.selectedId}
-        dispatch={dispatch}
-      />
-      <Chat
-        key={contact.id}
-        message={message}
-        contact={contact}
-        dispatch={dispatch}
-      />
-    </div>
-  );
-}
-
-const contacts = [
-  {id: 0, name: 'Taylor', email: 'taylor@mail.com'},
-  {id: 1, name: 'Alice', email: 'alice@mail.com'},
-  {id: 2, name: 'Bob', email: 'bob@mail.com'},
-];
-```
-
-```js src/messengerReducer.js
-export const initialState = {
-  selectedId: 0,
-  messages: {
-    0: 'Hello, Taylor',
-    1: 'Hello, Alice',
-    2: 'Hello, Bob',
-  },
-};
-
-export function messengerReducer(state, action) {
-  switch (action.type) {
-    case 'changed_selection': {
-      return {
-        ...state,
-        selectedId: action.contactId,
-      };
-    }
-    case 'edited_message': {
-      return {
-        ...state,
-        messages: {
-          ...state.messages,
-          [state.selectedId]: action.message,
-        },
-      };
-    }
-    case 'sent_message': {
-      return {
-        ...state,
-        messages: {
-          ...state.messages,
-          [state.selectedId]: '',
-        },
-      };
-    }
-    default: {
-      throw Error('Unknown action: ' + action.type);
-    }
-  }
-}
-```
-
-```js src/ContactList.js
-export default function ContactList({contacts, selectedId, dispatch}) {
-  return (
-    <section className="contact-list">
-      <ul>
-        {contacts.map((contact) => (
-          <li key={contact.id}>
-            <button
-              onClick={() => {
-                dispatch({
-                  type: 'changed_selection',
-                  contactId: contact.id,
-                });
-              }}>
-              {selectedId === contact.id ? <b>{contact.name}</b> : contact.name}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-```
-
-```js src/Chat.js
-import { useState } from 'react';
-
-export default function Chat({contact, message, dispatch}) {
-  return (
-    <section className="chat">
-      <textarea
-        value={message}
-        placeholder={'Chat to ' + contact.name}
-        onChange={(e) => {
-          dispatch({
-            type: 'edited_message',
-            message: e.target.value,
-          });
-        }}
-      />
-      <br />
-      <button
-        onClick={() => {
-          alert(`Sending "${message}" to ${contact.email}`);
-          dispatch({
-            type: 'sent_message',
-          });
-        }}>
-        Send to {contact.email}
-      </button>
-    </section>
-  );
-}
-```
-
-```css
-.chat,
-.contact-list {
-  float: left;
-  margin-bottom: 20px;
-}
-ul,
-li {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-li button {
-  width: 100px;
-  padding: 10px;
-  margin-right: 10px;
-}
-textarea {
-  height: 150px;
-}
-```
-
-</Sandpack>
-
-Notably, you didn't need to change any of the event handlers to implement this different behavior. Without a reducer, you would have to change every event handler that updates the state.
-
-</Solution>
-
-#### Implement `useReducer` from scratch {/*implement-usereducer-from-scratch*/}
-
-In the earlier examples, you imported the `useReducer` Hook from React. This time, you will implement _the `useReducer` Hook itself!_ Here is a stub to get you started. It shouldn't take more than 10 lines of code.
-
-To test your changes, try typing into the input or select a contact.
-
-<Hint>
-
-Here is a more detailed sketch of the implementation:
-
-```js
-export function useReducer(reducer, initialState) {
-  const [state, setState] = useState(initialState);
-
-  function dispatch(action) {
-    // ???
-  }
-
-  return [state, dispatch];
-}
-```
-
-Recall that a reducer function takes two arguments--the current state and the action object--and it returns the next state. What should your `dispatch` implementation do with it?
-
-</Hint>
-
-<Sandpack>
-
-```js src/App.js
-import { useReducer } from './MyReact.js';
-import Chat from './Chat.js';
-import ContactList from './ContactList.js';
-import { initialState, messengerReducer } from './messengerReducer';
-
-export default function Messenger() {
-  const [state, dispatch] = useReducer(messengerReducer, initialState);
-  const message = state.messages[state.selectedId];
-  const contact = contacts.find((c) => c.id === state.selectedId);
-  return (
-    <div>
-      <ContactList
-        contacts={contacts}
-        selectedId={state.selectedId}
-        dispatch={dispatch}
-      />
-      <Chat
-        key={contact.id}
-        message={message}
-        contact={contact}
-        dispatch={dispatch}
-      />
-    </div>
-  );
-}
-
-const contacts = [
-  {id: 0, name: 'Taylor', email: 'taylor@mail.com'},
-  {id: 1, name: 'Alice', email: 'alice@mail.com'},
-  {id: 2, name: 'Bob', email: 'bob@mail.com'},
-];
-```
-
-```js src/messengerReducer.js
-export const initialState = {
-  selectedId: 0,
-  messages: {
-    0: 'Hello, Taylor',
-    1: 'Hello, Alice',
-    2: 'Hello, Bob',
-  },
-};
-
-export function messengerReducer(state, action) {
-  switch (action.type) {
-    case 'changed_selection': {
-      return {
-        ...state,
-        selectedId: action.contactId,
-      };
-    }
-    case 'edited_message': {
-      return {
-        ...state,
-        messages: {
-          ...state.messages,
-          [state.selectedId]: action.message,
-        },
-      };
-    }
-    case 'sent_message': {
-      return {
-        ...state,
-        messages: {
-          ...state.messages,
-          [state.selectedId]: '',
-        },
-      };
-    }
-    default: {
-      throw Error('Unknown action: ' + action.type);
-    }
-  }
-}
-```
-
-```js src/MyReact.js active
-import { useState } from 'react';
-
-export function useReducer(reducer, initialState) {
-  const [state, setState] = useState(initialState);
-
-  // ???
-
-  return [state, dispatch];
-}
-```
-
-```js src/ContactList.js hidden
-export default function ContactList({contacts, selectedId, dispatch}) {
-  return (
-    <section className="contact-list">
-      <ul>
-        {contacts.map((contact) => (
-          <li key={contact.id}>
-            <button
-              onClick={() => {
-                dispatch({
-                  type: 'changed_selection',
-                  contactId: contact.id,
-                });
-              }}>
-              {selectedId === contact.id ? <b>{contact.name}</b> : contact.name}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-```
-
-```js src/Chat.js hidden
-import { useState } from 'react';
-
-export default function Chat({contact, message, dispatch}) {
-  return (
-    <section className="chat">
-      <textarea
-        value={message}
-        placeholder={'Chat to ' + contact.name}
-        onChange={(e) => {
-          dispatch({
-            type: 'edited_message',
-            message: e.target.value,
-          });
-        }}
-      />
-      <br />
-      <button
-        onClick={() => {
-          alert(`Sending "${message}" to ${contact.email}`);
-          dispatch({
-            type: 'sent_message',
-          });
-        }}>
-        Send to {contact.email}
-      </button>
-    </section>
-  );
-}
-```
-
-```css
-.chat,
-.contact-list {
-  float: left;
-  margin-bottom: 20px;
-}
-ul,
-li {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-li button {
-  width: 100px;
-  padding: 10px;
-  margin-right: 10px;
-}
-textarea {
-  height: 150px;
-}
-```
-
-</Sandpack>
-
-<Solution>
-
-Dispatching an action calls a reducer with the current state and the action, and stores the result as the next state. This is what it looks like in code:
-
-<Sandpack>
-
-```js src/App.js
-import { useReducer } from './MyReact.js';
-import Chat from './Chat.js';
-import ContactList from './ContactList.js';
-import { initialState, messengerReducer } from './messengerReducer';
-
-export default function Messenger() {
-  const [state, dispatch] = useReducer(messengerReducer, initialState);
-  const message = state.messages[state.selectedId];
-  const contact = contacts.find((c) => c.id === state.selectedId);
-  return (
-    <div>
-      <ContactList
-        contacts={contacts}
-        selectedId={state.selectedId}
-        dispatch={dispatch}
-      />
-      <Chat
-        key={contact.id}
-        message={message}
-        contact={contact}
-        dispatch={dispatch}
-      />
-    </div>
-  );
-}
-
-const contacts = [
-  {id: 0, name: 'Taylor', email: 'taylor@mail.com'},
-  {id: 1, name: 'Alice', email: 'alice@mail.com'},
-  {id: 2, name: 'Bob', email: 'bob@mail.com'},
-];
-```
-
-```js src/messengerReducer.js
-export const initialState = {
-  selectedId: 0,
-  messages: {
-    0: 'Hello, Taylor',
-    1: 'Hello, Alice',
-    2: 'Hello, Bob',
-  },
-};
-
-export function messengerReducer(state, action) {
-  switch (action.type) {
-    case 'changed_selection': {
-      return {
-        ...state,
-        selectedId: action.contactId,
-      };
-    }
-    case 'edited_message': {
-      return {
-        ...state,
-        messages: {
-          ...state.messages,
-          [state.selectedId]: action.message,
-        },
-      };
-    }
-    case 'sent_message': {
-      return {
-        ...state,
-        messages: {
-          ...state.messages,
-          [state.selectedId]: '',
-        },
-      };
-    }
-    default: {
-      throw Error('Unknown action: ' + action.type);
-    }
-  }
-}
-```
-
-```js src/MyReact.js active
-import { useState } from 'react';
-
-export function useReducer(reducer, initialState) {
-  const [state, setState] = useState(initialState);
-
-  function dispatch(action) {
-    const nextState = reducer(state, action);
-    setState(nextState);
-  }
-
-  return [state, dispatch];
-}
-```
-
-```js src/ContactList.js hidden
-export default function ContactList({contacts, selectedId, dispatch}) {
-  return (
-    <section className="contact-list">
-      <ul>
-        {contacts.map((contact) => (
-          <li key={contact.id}>
-            <button
-              onClick={() => {
-                dispatch({
-                  type: 'changed_selection',
-                  contactId: contact.id,
-                });
-              }}>
-              {selectedId === contact.id ? <b>{contact.name}</b> : contact.name}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-```
-
-```js src/Chat.js hidden
-import { useState } from 'react';
-
-export default function Chat({contact, message, dispatch}) {
-  return (
-    <section className="chat">
-      <textarea
-        value={message}
-        placeholder={'Chat to ' + contact.name}
-        onChange={(e) => {
-          dispatch({
-            type: 'edited_message',
-            message: e.target.value,
-          });
-        }}
-      />
-      <br />
-      <button
-        onClick={() => {
-          alert(`Sending "${message}" to ${contact.email}`);
-          dispatch({
-            type: 'sent_message',
-          });
-        }}>
-        Send to {contact.email}
-      </button>
-    </section>
-  );
-}
-```
-
-```css
-.chat,
-.contact-list {
-  float: left;
-  margin-bottom: 20px;
-}
-ul,
-li {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-li button {
-  width: 100px;
-  padding: 10px;
-  margin-right: 10px;
-}
-textarea {
-  height: 150px;
-}
-```
-
-</Sandpack>
-
-Though it doesn't matter in most cases, a slightly more accurate implementation looks like this:
-
-```js
-function dispatch(action) {
-  setState((s) => reducer(s, action));
-}
-```
-
-This is because the dispatched actions are queued until the next render, [similar to the updater functions.](/learn/queueing-a-series-of-state-updates)
-
-</Solution>
-
-</Challenges>
