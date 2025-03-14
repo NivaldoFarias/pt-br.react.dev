@@ -1,9 +1,9 @@
 ---
-title: Rules of React
+title: Regras do React
 ---
 
 <Intro>
-Just as different programming languages have their own ways of expressing concepts, React has its own idioms — or rules — for how to express patterns in a way that is easy to understand and yields high-quality applications.
+Assim como diferentes linguagens de programação têm suas próprias maneiras de expressar conceitos, o React tem seus próprios idiomas — ou regras — para como expressar padrões de uma maneira que seja fácil de entender e produza aplicações de alta qualidade.
 </Intro>
 
 <InlineToc />
@@ -11,42 +11,42 @@ Just as different programming languages have their own ways of expressing concep
 ---
 
 <Note>
-To learn more about expressing UIs with React, we recommend reading [Thinking in React](/learn/thinking-in-react).
+Para saber mais sobre como expressar UIs com o React, recomendamos ler [Pensando em React](/learn/thinking-in-react).
 </Note>
 
-This section describes the rules you need to follow to write idiomatic React code. Writing idiomatic React code can help you write well organized, safe, and composable applications. These properties make your app more resilient to changes and makes it easier to work with other developers, libraries, and tools.
+Esta seção descreve as regras que você precisa seguir para escrever um código React idiomático. Escrever um código React idiomático pode ajudá-lo a escrever aplicações bem organizadas, seguras e compostas. Essas propriedades tornam seu aplicativo mais resistente a mudanças e facilita o trabalho com outros desenvolvedores, bibliotecas e ferramentas.
 
-These rules are known as the **Rules of React**. They are rules – and not just guidelines – in the sense that if they are broken, your app likely has bugs. Your code also becomes unidiomatic and harder to understand and reason about.
+Estas regras são conhecidas como as **Regras do React**. Elas são regras – e não apenas diretrizes – no sentido de que, se forem quebradas, seu aplicativo provavelmente terá erros. Seu código também se torna não idiomático e mais difícil de entender e raciocinar.
 
-We strongly recommend using [Strict Mode](/reference/react/StrictMode) alongside React's [ESLint plugin](https://www.npmjs.com/package/eslint-plugin-react-hooks) to help your codebase follow the Rules of React. By following the Rules of React, you'll be able to find and address these bugs and keep your application maintainable.
-
----
-
-## Components and Hooks must be pure {/*components-and-hooks-must-be-pure*/}
-
-[Purity in Components and Hooks](/reference/rules/components-and-hooks-must-be-pure) is a key rule of React that makes your app predictable, easy to debug, and allows React to automatically optimize your code.
-
-* [Components must be idempotent](/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent) – React components are assumed to always return the same output with respect to their inputs – props, state, and context.
-* [Side effects must run outside of render](/reference/rules/components-and-hooks-must-be-pure#side-effects-must-run-outside-of-render) – Side effects should not run in render, as React can render components multiple times to create the best possible user experience.
-* [Props and state are immutable](/reference/rules/components-and-hooks-must-be-pure#props-and-state-are-immutable) – A component’s props and state are immutable snapshots with respect to a single render. Never mutate them directly.
-* [Return values and arguments to Hooks are immutable](/reference/rules/components-and-hooks-must-be-pure#return-values-and-arguments-to-hooks-are-immutable) – Once values are passed to a Hook, you should not modify them. Like props in JSX, values become immutable when passed to a Hook.
-* [Values are immutable after being passed to JSX](/reference/rules/components-and-hooks-must-be-pure#values-are-immutable-after-being-passed-to-jsx) – Don’t mutate values after they’ve been used in JSX. Move the mutation before the JSX is created.
+Recomendamos fortemente o uso do [Strict Mode](/reference/react/StrictMode) junto com o [plugin ESLint](https://www.npmjs.com/package/eslint-plugin-react-hooks) do React para ajudar seu codebase a seguir as Regras do React. Ao seguir as Regras do React, você poderá encontrar e solucionar esses erros e manter seu aplicativo.
 
 ---
 
-## React calls Components and Hooks {/*react-calls-components-and-hooks*/}
+## Componentes e Hooks devem ser puros {/*components-and-hooks-must-be-pure*/}
 
-[React is responsible for rendering components and hooks when necessary to optimize the user experience.](/reference/rules/react-calls-components-and-hooks) It is declarative: you tell React what to render in your component’s logic, and React will figure out how best to display it to your user.
+[Pureza em Componentes e Hooks](/reference/rules/components-and-hooks-must-be-pure) é uma regra chave do React que torna seu aplicativo previsível, fácil de depurar e permite que o React otimize automaticamente seu código.
 
-* [Never call component functions directly](/reference/rules/react-calls-components-and-hooks#never-call-component-functions-directly) – Components should only be used in JSX. Don’t call them as regular functions.
-* [Never pass around hooks as regular values](/reference/rules/react-calls-components-and-hooks#never-pass-around-hooks-as-regular-values) – Hooks should only be called inside of components. Never pass it around as a regular value.
+*   [Componentes devem ser idempotentes](/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent) – Componentes React são assumidos para sempre retornar a mesma saída com relação a suas entradas – props, state e context.
+*   [Side effects devem ser executados fora do render](/reference/rules/components-and-hooks-must-be-pure#side-effects-must-run-outside-of-render) – Side effects não devem ser executados no render, pois o React pode renderizar componentes várias vezes para criar a melhor experiência possível para o usuário.
+*   [Props e state são imutáveis](/reference/rules/components-and-hooks-must-be-pure#props-and-state-are-immutable) – As props e o state de um componente são snapshots imutáveis com relação a um único render. Nunca os mute diretamente.
+*   [Valores de retorno e argumentos para Hooks são imutáveis](/reference/rules/components-and-hooks-must-be-pure#return-values-and-arguments-to-hooks-are-immutable) – Depois que os valores são passados para um Hook, você não deve modificá-los. Como props em JSX, os valores se tornam imutáveis quando passados para um Hook.
+*   [Valores são imutáveis depois de serem passados para JSX](/reference/rules/components-and-hooks-must-be-pure#values-are-immutable-after-being-passed-to-jsx) – Não mute valores depois de serem usados em JSX. Mova a mutação antes da criação do JSX.
 
 ---
 
-## Rules of Hooks {/*rules-of-hooks*/}
+## React chama Componentes e Hooks {/*react-calls-components-and-hooks*/}
 
-Hooks are defined using JavaScript functions, but they represent a special type of reusable UI logic with restrictions on where they can be called. You need to follow the [Rules of Hooks](/reference/rules/rules-of-hooks) when using them.
+[O React é responsável por renderizar componentes e hooks quando necessário para otimizar a experiência do usuário.](/reference/rules/react-calls-components-and-hooks) É declarativo: você diz ao React o que renderizar na lógica do seu componente, e o React descobrirá a melhor forma de exibi-lo para seu usuário.
 
-* [Only call Hooks at the top level](/reference/rules/rules-of-hooks#only-call-hooks-at-the-top-level) – Don’t call Hooks inside loops, conditions, or nested functions. Instead, always use Hooks at the top level of your React function, before any early returns.
-* [Only call Hooks from React functions](/reference/rules/rules-of-hooks#only-call-hooks-from-react-functions) – Don’t call Hooks from regular JavaScript functions.
+*   [Nunca chame funções de componentes diretamente](/reference/rules/react-calls-components-and-hooks#never-call-component-functions-directly) – Componentes devem ser usados apenas em JSX. Não os chame como funções regulares.
+*   [Nunca passe hooks como valores regulares](/reference/rules/react-calls-components-and-hooks#never-pass-around-hooks-as-regular-values) – Os Hooks devem ser chamados apenas dentro de componentes. Nunca os passe como um valor regular.
 
+---
+
+## Regras dos Hooks {/*rules-of-hooks*/}
+
+Hooks são definidos usando funções JavaScript, mas eles representam um tipo especial de lógica de UI reutilizável com restrições sobre onde eles podem ser chamados. Você precisa seguir as [Regras dos Hooks](/reference/rules/rules-of-hooks) ao usá-los.
+
+*   [Chame Hooks somente no nível superior](/reference/rules/rules-of-hooks#only-call-hooks-at-the-top-level) – Não chame Hooks dentro de loops, condições ou funções aninhadas. Em vez disso, sempre use Hooks no nível superior da sua função React, antes de quaisquer retornos antecipados.
+*   [Chame Hooks somente de funções React](/reference/rules/rules-of-hooks#only-call-hooks-from-react-functions) – Não chame Hooks de funções JavaScript regulares.
+```
