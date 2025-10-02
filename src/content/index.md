@@ -1,3 +1,4 @@
+```
 ---
 id: home
 title: React
