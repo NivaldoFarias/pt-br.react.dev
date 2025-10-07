@@ -1,19 +1,19 @@
----
+```md
 title: <Activity>
 version: canary
 ---
 
 <Canary>
 
-**The `<Activity />` API is currently only available in React’s Canary and Experimental channels.** 
+**A API `<Activity />` está atualmente disponível apenas nos canais Canary e Experimental do React.** 
 
-[Learn more about React’s release channels here.](/community/versioning-policy#all-release-channels)
+[Saiba mais sobre os canais de lançamento do React aqui.](/community/versioning-policy#all-release-channels)
 
 </Canary>
 
 <Intro>
 
-`<Activity>` lets you hide and restore the UI and internal state of its children.
+`<Activity>` permite ocultar e restaurar a UI e o estado interno de seus filhos.
 
 ```js
 <Activity mode={visibility}>
@@ -27,11 +27,11 @@ version: canary
 
 ---
 
-## Reference {/*reference*/}
+## Referência {/*reference*/}
 
 ### `<Activity>` {/*activity*/}
 
-You can use Activity to hide part of your application:
+Você pode usar Activity para ocultar parte de sua aplicação:
 
 ```js [[1, 1, "\\"hidden\\""], [2, 2, "<Sidebar />"], [3, 1, "\\"visible\\""]]
 <Activity mode={isShowingSidebar ? "visible" : "hidden"}>
@@ -39,32 +39,32 @@ You can use Activity to hide part of your application:
 </Activity>
 ```
 
-When an Activity boundary is <CodeStep step={1}>hidden</CodeStep>, React will visually hide <CodeStep step={2}>its children</CodeStep> using the `display: "none"` CSS property. It will also destroy their Effects, cleaning up any active subscriptions.
+Quando um limite de Activity é <CodeStep step={1}>ocultado</CodeStep>, o React ocultará visualmente <CodeStep step={2}>seus filhos</CodeStep> usando a propriedade CSS `display: "none"`. Ele também destruirá seus Effects, limpando quaisquer assinaturas ativas.
 
-While hidden, children still re-render in response to new props, albeit at a lower priority than the rest of the content.
+Enquanto ocultos, os filhos ainda são renderizados em resposta a novas props, embora com uma prioridade menor do que o restante do conteúdo.
 
-When the boundary becomes <CodeStep step={3}>visible</CodeStep> again, React will reveal the children with their previous state restored, and re-create their Effects.
+Quando o limite se torna <CodeStep step={3}>visível</CodeStep> novamente, o React revelará os filhos com seu estado anterior restaurado e recriará seus Effects.
 
-In this way, Activity can be thought of as a mechanism for rendering "background activity". Rather than completely discarding content that's likely to become visible again, you can use Activity to maintain and restore that content's UI and internal state, while ensuring that your hidden content has no unwanted side effects.
+Dessa forma, Activity pode ser considerado um mecanismo para renderizar "atividade em segundo plano". Em vez de descartar completamente o conteúdo que provavelmente se tornará visível novamente, você pode usar Activity para manter e restaurar a UI e o estado interno desse conteúdo, garantindo que seu conteúdo oculto não tenha efeitos colaterais indesejados.
 
-[See more examples below.](#usage)
+[Veja mais exemplos abaixo.](#usage)
 
 #### Props {/*props*/}
 
-* `children`: The UI you intend to show and hide.
-* `mode`: A string value of either `'visible'` or `'hidden'`. If omitted, defaults to `'visible'`. 
+* `children`: A UI que você pretende mostrar e ocultar.
+* `mode`: Um valor de string `'visible'` ou `'hidden'`. Se omitido, o padrão é `'visible'`.
 
-#### Caveats {/*caveats*/}
+#### Ressalvas {/*caveats*/}
 
-- If an Activity is rendered inside of a [ViewTransition](/reference/react/ViewTransition), and it becomes visible as a result of an update caused by [startTransition](/reference/react/startTransition), it will activate the ViewTransition's `enter` animation. If it becomes hidden, it will activate its `exit` animation.
+- Se uma Activity for renderizada dentro de uma [ViewTransition](/reference/react/ViewTransition), e ela se tornar visível como resultado de uma atualização causada por [startTransition](/reference/react/startTransition), ela ativará a animação `enter` da ViewTransition. Se ela se tornar oculta, ela ativará sua animação `exit`.
 
 ---
 
-## Usage {/*usage*/}
+## Uso {/*usage*/}
 
-### Restoring the state of hidden components {/*restoring-the-state-of-hidden-components*/}
+### Restaurando o estado de componentes ocultos {/*restoring-the-state-of-hidden-components*/}
 
-In React, when you want to conditionally show or hide a component, you typically mount or unmount it based on that condition:
+No React, quando você deseja mostrar ou ocultar condicionalmente um componente, você normalmente o monta ou desmonta com base nessa condição:
 
 ```jsx
 {isShowingSidebar && (
@@ -72,9 +72,9 @@ In React, when you want to conditionally show or hide a component, you typically
 )}
 ```
 
-But unmounting a component destroys its internal state, which is not always what you want.
+Mas desmontar um componente destrói seu estado interno, o que nem sempre é o que você deseja.
 
-When you hide a component using an Activity boundary instead, React will "save" its state for later:
+Quando você oculta um componente usando um limite de Activity em vez disso, o React "salvará" seu estado para mais tarde:
 
 ```jsx
 <Activity mode={isShowingSidebar ? "visible" : "hidden"}>
@@ -82,11 +82,11 @@ When you hide a component using an Activity boundary instead, React will "save" 
 </Activity>
 ```
 
-This makes it possible to hide and then later restore components in the state they were previously in.
+Isso permite ocultar e, em seguida, restaurar componentes no estado em que estavam anteriormente.
 
-The following example has a sidebar with an expandable section. You can press "Overview" to reveal the three subitems below it. The main app area also has a button that hides and shows the sidebar.
+O exemplo a seguir tem uma barra lateral com uma seção expansível. Você pode pressionar "Overview" para revelar os três subitens abaixo dela. A área principal do aplicativo também tem um botão que oculta e mostra a barra lateral.
 
-Try expanding the Overview section, and then toggling the sidebar closed then open:
+Tente expandir a seção Overview e, em seguida, fechar e abrir a barra lateral:
 
 <Sandpack>
 
@@ -192,25 +192,25 @@ h1 {
 
 </Sandpack>
 
-The Overview section always starts out collapsed. Because we unmount the sidebar when `isShowingSidebar` flips to `false`, all its internal state is lost.
+A seção Overview sempre começa recolhida. Como desmontamos a barra lateral quando `isShowingSidebar` muda para `false`, todo o seu estado interno é perdido.
 
-This is a perfect use case for Activity. We can preserve the internal state of our sidebar, even when visually hiding it.
+Este é um caso de uso perfeito para Activity. Podemos preservar o estado interno de nossa barra lateral, mesmo quando a ocultamos visualmente.
 
-Let's replace the conditional rendering of our sidebar with an Activity boundary:
+Vamos substituir a renderização condicional de nossa barra lateral por um limite de Activity:
 
 ```jsx {7,9}
-// Before
+// Antes
 {isShowingSidebar && (
   <Sidebar />
 )}
 
-// After
+// Depois
 <Activity mode={isShowingSidebar ? 'visible' : 'hidden'}>
   <Sidebar />
 </Activity>
 ```
 
-and check out the new behavior:
+e confira o novo comportamento:
 
 <Sandpack>
 
@@ -316,15 +316,15 @@ h1 {
 
 </Sandpack>
 
-Our sidebar's internal state is now restored, without any changes to its implementation.
+O estado interno da nossa barra lateral agora está restaurado, sem nenhuma alteração em sua implementação.
 
 ---
 
-### Restoring the DOM of hidden components {/*restoring-the-dom-of-hidden-components*/}
+### Restaurando o DOM de componentes ocultos {/*restoring-the-dom-of-hidden-components*/}
 
-Since Activity boundaries hide their children using `display: none`, their children's DOM is also preserved when hidden. This makes them great for maintaining ephemeral state in parts of the UI that the user is likely to interact with again.
+Como os limites de Activity ocultam seus filhos usando `display: none`, o DOM de seus filhos também é preservado quando oculto. Isso os torna ótimos para manter estado efêmero em partes da UI com as quais o usuário provavelmente interagirá novamente.
 
-In this example, the Contact tab has a `<textarea>` where the user can enter a message. If you enter some text, change to the Home tab, then change back to the Contact tab, the draft message is lost:
+Neste exemplo, a aba Contato tem um `<textarea>` onde o usuário pode digitar uma mensagem. Se você digitar algum texto, mudar para a aba Home e depois voltar para a aba Contato, a mensagem rascunhada será perdida:
 
 <Sandpack>
 
@@ -427,9 +427,9 @@ b { display: inline-block; margin-right: 10px; }
 
 </Sandpack>
 
-This is because we're fully unmounting `Contact` in `App`. When the Contact tab unmounts, the `<textarea>` element's internal DOM state is lost.
+Isso ocorre porque estamos desmontando completamente `Contact` em `App`. Quando a aba Contato é desmontada, o estado interno do elemento `<textarea>` é perdido.
 
-If we switch to using an Activity boundary to show and hide the active tab, we can preserve the state of each tab's DOM. Try entering text and switching tabs again, and you'll see the draft message is no longer reset:
+Se usarmos um limite de Activity para mostrar e ocultar a aba ativa, podemos preservar o estado do DOM de cada aba. Tente digitar texto e mudar de aba novamente, e você verá que a mensagem rascunhada não é mais redefinida:
 
 <Sandpack>
 
@@ -536,15 +536,15 @@ b { display: inline-block; margin-right: 10px; }
 
 </Sandpack>
 
-Again, the Activity boundary let us preserve the Contact tab's internal state without changing its implementation.
+Novamente, o limite de Activity nos permitiu preservar o estado interno da aba Contato sem alterar sua implementação.
 
 ---
 
-### Pre-rendering content that's likely to become visible {/*pre-rendering-content-thats-likely-to-become-visible*/}
+### Pré-renderizando conteúdo que provavelmente se tornará visível {/*pre-rendering-content-thats-likely-to-become-visible*/}
 
-So far, we've seen how Activity can hide some content that the user has interacted with, without discarding that content's ephemeral state.
+Até agora, vimos como Activity pode ocultar algum conteúdo com o qual o usuário interagiu, sem descartar o estado efêmero desse conteúdo.
 
-But Activity boundaries can also be used to _prepare_ content that the user has yet to see for the first time:
+Mas os limites de Activity também podem ser usados para _preparar_ conteúdo que o usuário ainda não viu pela primeira vez:
 
 ```jsx [[1, 1, "\\"hidden\\""]]
 <Activity mode="hidden">
@@ -552,13 +552,13 @@ But Activity boundaries can also be used to _prepare_ content that the user has 
 </Activity>
 ```
 
-When an Activity boundary is <CodeStep step={1}>hidden</CodeStep> during its initial render, its children won't be visible on the page — but they will _still be rendered_, albeit at a lower priority than the visible content, and without mounting their Effects.
+Quando um limite de Activity é <CodeStep step={1}>ocultado</CodeStep> durante sua renderização inicial, seus filhos não serão visíveis na página — mas eles _ainda serão renderizados_, embora com uma prioridade menor do que o conteúdo visível, e sem montar seus Effects.
 
-This _pre-rendering_ allows the children to load any code or data they need ahead of time, so that later, when the Activity boundary becomes visible, the children can appear faster with reduced loading times.
+Este _pré-renderização_ permite que os filhos carreguem qualquer código ou dados de que precisam com antecedência, para que, mais tarde, quando o limite de Activity se tornar visível, os filhos possam aparecer mais rapidamente com tempos de carregamento reduzidos.
 
-Let's look at an example.
+Vamos ver um exemplo.
 
-In this demo, the Posts tab loads some data. If you press it, you'll see a Suspense fallback displayed while the data is being fetched:
+Nesta demonstração, a aba Posts carrega alguns dados. Se você clicar nela, verá um fallback de Suspense exibido enquanto os dados estão sendo buscados:
 
 <Sandpack>
 
@@ -580,833 +580,4 @@ export default function App() {
         Home
       </TabButton>
       <TabButton
-        isActive={activeTab === 'posts'}
-        onClick={() => setActiveTab('posts')}
-      >
-        Posts
-      </TabButton>
-
-      <hr />
-
-      <Suspense fallback={<h1>🌀 Loading...</h1>}>
-        {activeTab === 'home' && <Home />}
-        {activeTab === 'posts' && <Posts />}
-      </Suspense>
-    </>
-  );
-}
-```
-
-```js src/TabButton.js hidden
-export default function TabButton({ onClick, children, isActive }) {
-  if (isActive) {
-    return <b>{children}</b>
-  }
-
-  return (
-    <button onClick={onClick}>
-      {children}
-    </button>
-  );
-}
-```
-
-```js src/Home.js
-export default function Home() {
-  return (
-    <p>Welcome to my profile!</p>
-  );
-}
-```
-
-```js src/Posts.js
-import { use } from 'react';
-import { fetchData } from './data.js';
-
-export default function Posts() {
-  const posts = use(fetchData('/posts'));
-
-  return (
-    <ul className="items">
-      {posts.map(post =>
-        <li className="item" key={post.id}>
-          {post.title}
-        </li>
-      )}
-    </ul>
-  );
-}
-```
-
-```js src/data.js hidden
-// Note: the way you would do data fetching depends on
-// the framework that you use together with Suspense.
-// Normally, the caching logic would be inside a framework.
-
-let cache = new Map();
-
-export function fetchData(url) {
-  if (!cache.has(url)) {
-    cache.set(url, getData(url));
-  }
-  return cache.get(url);
-}
-
-async function getData(url) {
-  if (url.startsWith('/posts')) {
-    return await getPosts();
-  } else {
-    throw Error('Not implemented');
-  }
-}
-
-async function getPosts() {
-  // Add a fake delay to make waiting noticeable.
-  await new Promise(resolve => {
-    setTimeout(resolve, 1000);
-  });
-  let posts = [];
-  for (let i = 0; i < 10; i++) {
-    posts.push({
-      id: i,
-      title: 'Post #' + (i + 1)
-    });
-  }
-  return posts;
-}
-```
-
-```css
-body { height: 275px; }
-button { margin-right: 10px }
-b { display: inline-block; margin-right: 10px; }
-.pending { color: #777; }
-video { width: 300px; margin-top: 10px; aspect-ratio: 16/9; }
-```
-
-```json package.json hidden
-{
-  "dependencies": {
-    "react": "experimental",
-    "react-dom": "experimental",
-    "react-scripts": "latest",
-    "toastify-js": "1.12.0"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  }
-}
-```
-
-</Sandpack>
-
-This is because `App` doesn't mount `Posts` until its tab is active.
-
-If we update `App` to use an Activity boundary to show and hide the active tab, `Posts` will be pre-rendered when the app first loads, allowing it to fetch its data before it becomes visible.
-
-Try clicking the Posts tab now:
-
-<Sandpack>
-
-```js src/App.js
-import { useState, Suspense, unstable_Activity as Activity } from 'react';
-import TabButton from './TabButton.js';
-import Home from './Home.js';
-import Posts from './Posts.js';
-
-export default function App() {
-  const [activeTab, setActiveTab] = useState('home');
-
-  return (
-    <>
-      <TabButton
-        isActive={activeTab === 'home'}
-        onClick={() => setActiveTab('home')}
-      >
-        Home
-      </TabButton>
-      <TabButton
-        isActive={activeTab === 'posts'}
-        onClick={() => setActiveTab('posts')}
-      >
-        Posts
-      </TabButton>
-
-      <hr />
-
-      <Suspense fallback={<h1>🌀 Loading...</h1>}>
-        <Activity mode={activeTab === 'home' ? 'visible' : 'hidden'}>
-          <Home />
-        </Activity>
-        <Activity mode={activeTab === 'posts' ? 'visible' : 'hidden'}>
-          <Posts />
-        </Activity>
-      </Suspense>
-    </>
-  );
-}
-```
-
-```js src/TabButton.js hidden
-export default function TabButton({ onClick, children, isActive }) {
-  if (isActive) {
-    return <b>{children}</b>
-  }
-
-  return (
-    <button onClick={onClick}>
-      {children}
-    </button>
-  );
-}
-```
-
-```js src/Home.js
-export default function Home() {
-  return (
-    <p>Welcome to my profile!</p>
-  );
-}
-```
-
-```js src/Posts.js
-import { use } from 'react';
-import { fetchData } from './data.js';
-
-export default function Posts() {
-  const posts = use(fetchData('/posts'));
-
-  return (
-    <ul className="items">
-      {posts.map(post =>
-        <li className="item" key={post.id}>
-          {post.title}
-        </li>
-      )}
-    </ul>
-  );
-}
-```
-
-```js src/data.js hidden
-// Note: the way you would do data fetching depends on
-// the framework that you use together with Suspense.
-// Normally, the caching logic would be inside a framework.
-
-let cache = new Map();
-
-export function fetchData(url) {
-  if (!cache.has(url)) {
-    cache.set(url, getData(url));
-  }
-  return cache.get(url);
-}
-
-async function getData(url) {
-  if (url.startsWith('/posts')) {
-    return await getPosts();
-  } else {
-    throw Error('Not implemented');
-  }
-}
-
-async function getPosts() {
-  // Add a fake delay to make waiting noticeable.
-  await new Promise(resolve => {
-    setTimeout(resolve, 1000);
-  });
-  let posts = [];
-  for (let i = 0; i < 10; i++) {
-    posts.push({
-      id: i,
-      title: 'Post #' + (i + 1)
-    });
-  }
-  return posts;
-}
-```
-
-```css
-body { height: 275px; }
-button { margin-right: 10px }
-b { display: inline-block; margin-right: 10px; }
-.pending { color: #777; }
-video { width: 300px; margin-top: 10px; aspect-ratio: 16/9; }
-```
-
-```json package.json hidden
-{
-  "dependencies": {
-    "react": "experimental",
-    "react-dom": "experimental",
-    "react-scripts": "latest",
-    "toastify-js": "1.12.0"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  }
-}
-```
-
-</Sandpack>
-
-`Posts` was able to prepare itself for a faster render, thanks to the hidden Activity boundary.
-
----
-
-Pre-rendering components with hidden Activity boundaries is a powerful way to reduce loading times for parts of the UI that the user is likely to interact with next.
-
-<Note>
-
-**Only Suspense-enabled data sources will be fetched during pre-rendering.** They include:
-
-- Data fetching with Suspense-enabled frameworks like [Relay](https://relay.dev/docs/guided-tour/rendering/loading-states/) and [Next.js](https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming#streaming-with-suspense)
-- Lazy-loading component code with [`lazy`](/reference/react/lazy)
-- Reading the value of a cached Promise with [`use`](/reference/react/use)
-
-Activity **does not** detect data that is fetched inside an Effect.
-
-The exact way you would load data in the `Posts` component above depends on your framework. If you use a Suspense-enabled framework, you'll find the details in its data fetching documentation.
-
-Suspense-enabled data fetching without the use of an opinionated framework is not yet supported. The requirements for implementing a Suspense-enabled data source are unstable and undocumented. An official API for integrating data sources with Suspense will be released in a future version of React. 
-
-</Note>
-
----
-
-
-### Speeding up interactions during page load {/*speeding-up-interactions-during-page-load*/}
-
-React includes an under-the-hood performance optimization called Selective Hydration. It works by hydrating your app's initial HTML _in chunks_, enabling some components to become interactive even if other components on the page haven't loaded their code or data yet.
-
-Suspense boundaries participate in Selective Hydration, because they naturally divide your component tree into units that are independent from one another:
-
-```jsx
-function Page() {
-  return (
-    <>
-      <MessageComposer />
-
-      <Suspense fallback="Loading chats...">
-        <Chats />
-      </Suspense>
-    </>
-  )
-}
-```
-
-Here, `MessageComposer` can be fully hydrated during the initial render of the page, even before `Chats` is mounted and starts to fetch its data.
-
-So by breaking up your component tree into discrete units, Suspense allows React to hydrate your app's server-rendered HTML in chunks, enabling parts of your app to become interactive as fast as possible.
-
-But what about pages that don't use Suspense?
-
-Take this tabs example:
-
-```jsx
-function Page() {
-  const [activeTab, setActiveTab] = useState('home');
-
-  return (
-    <>
-      <TabButton onClick={() => setActiveTab('home')}>
-        Home
-      </TabButton>
-      <TabButton onClick={() => setActiveTab('video')}>
-        Video
-      </TabButton>
-
-      {activeTab === 'home' && (
-        <Home />
-      )}
-      {activeTab === 'video' && (
-        <Video />
-      )}
-    </>
-  )
-}
-```
-
-Here, React must hydrate the entire page all at once. If `Home` or `Video` are slower to render, they could make the tab buttons feel unresponsive during hydration.
-
-Adding Suspense around the active tab would solve this:
-
-```jsx {13,20}
-function Page() {
-  const [activeTab, setActiveTab] = useState('home');
-
-  return (
-    <>
-      <TabButton onClick={() => setActiveTab('home')}>
-        Home
-      </TabButton>
-      <TabButton onClick={() => setActiveTab('video')}>
-        Video
-      </TabButton>
-
-      <Suspense fallback={<Placeholder />}>
-        {activeTab === 'home' && (
-          <Home />
-        )}
-        {activeTab === 'video' && (
-          <Video />
-        )}
-      </Suspense>
-    </>
-  )
-}
-```
-
-...but it would also change the UI, since the `Placeholder` fallback would be displayed on the initial render.
-
-Instead, we can use Activity. Since Activity boundaries show and hide their children, they already naturally divide the component tree into independent units. And just like Suspense, this feature allows them to participate in Selective Hydration.
-
-Let's update our example to use Activity boundaries around the active tab:
-
-```jsx {13-18}
-function Page() {
-  const [activeTab, setActiveTab] = useState('home');
-
-  return (
-    <>
-      <TabButton onClick={() => setActiveTab('home')}>
-        Home
-      </TabButton>
-      <TabButton onClick={() => setActiveTab('video')}>
-        Video
-      </TabButton>
-
-      <Activity mode={activeTab === "home" ? "visible" : "hidden"}>
-        <Home />
-      </Activity>
-      <Activity mode={activeTab === "video" ? "visible" : "hidden"}>
-        <Video />
-      </Activity>
-    </>
-  )
-}
-```
-
-Now our initial server-rendered HTML looks the same as it did in the original version, but thanks to Activity, React can hydrate the tab buttons first, before it even mounts `Home` or `Video`.
-
----
-
-Thus, in addition to hiding and showing content, Activity boundaries help improve your app's performance during hydration by letting React know which parts of your page can become interactive in isolation.
-
-And even if your page doesn't ever hide part of its content, you can still add always-visible Activity boundaries to improve hydration performance:
-
-```jsx
-function Page() {
-  return (
-    <>
-      <Post />
-
-      <Activity>
-        <Comments />
-      </Activity>
-    </>
-  );
-} 
-```
-
----
-
-## Troubleshooting {/*troubleshooting*/}
-
-### My hidden components have unwanted side effects {/*my-hidden-components-have-unwanted-side-effects*/}
-
-An Activity boundary hides its content by setting `display: none` on its children and cleaning up any of their Effects. So, most well-behaved React components that properly clean up their side effects will already be robust to being hidden by Activity.
-
-But there _are_ some situations where a hidden component behaves differently than an unmounted one. Most notably, since a hidden component's DOM is not destroyed, any side effects from that DOM will persist, even after the component is hidden.
-
-As an example, consider a `<video>` tag. Typically it doesn't require any cleanup, because even if you're playing a video, unmounting the tag stops the video and audio from playing in the browser. Try playing the video and then pressing Home in this demo:
-
-<Sandpack>
-
-```js src/App.js active
-import { useState } from 'react';
-import TabButton from './TabButton.js';
-import Home from './Home.js';
-import Video from './Video.js';
-
-export default function App() {
-  const [activeTab, setActiveTab] = useState('video');
-
-  return (
-    <>
-      <TabButton
-        isActive={activeTab === 'home'}
-        onClick={() => setActiveTab('home')}
-      >
-        Home
-      </TabButton>
-      <TabButton
-        isActive={activeTab === 'video'}
-        onClick={() => setActiveTab('video')}
-      >
-        Video
-      </TabButton>
-
-      <hr />
-
-      {activeTab === 'home' && <Home />}
-      {activeTab === 'video' && <Video />}
-    </>
-  );
-}
-```
-
-```js src/TabButton.js hidden
-export default function TabButton({ onClick, children, isActive }) {
-  if (isActive) {
-    return <b>{children}</b>
-  }
-
-  return (
-    <button onClick={onClick}>
-      {children}
-    </button>
-  );
-}
-```
-
-```js src/Home.js
-export default function Home() {
-  return (
-    <p>Welcome to my profile!</p>
-  );
-}
-```
-
-```js src/Video.js 
-export default function Video() {
-  return (
-    <video
-      // 'Big Buck Bunny' licensed under CC 3.0 by the Blender foundation. Hosted by archive.org
-      src="https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4"
-      controls
-      playsInline
-    />
-
-  );
-}
-```
-
-```css
-body { height: 275px; }
-button { margin-right: 10px }
-b { display: inline-block; margin-right: 10px; }
-.pending { color: #777; }
-video { width: 300px; margin-top: 10px; aspect-ratio: 16/9; }
-```
-
-```json package.json hidden
-{
-  "dependencies": {
-    "react": "experimental",
-    "react-dom": "experimental",
-    "react-scripts": "latest",
-    "toastify-js": "1.12.0"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  }
-}
-```
-
-</Sandpack>
-
-The video stops playing as expected.
-
-Now, let's say we wanted to preserve the timecode where the user last watched, so that when they tab back to the video, it doesn't start over from the beginning again.
-
-This is a great use case for Activity!
-
-Let's update `App` to hide the inactive tab with a hidden Activity boundary instead of unmounting it, and see how the demo behaves this time:
-
-<Sandpack>
-
-```js src/App.js active
-import { useState, unstable_Activity as Activity } from 'react';
-import TabButton from './TabButton.js';
-import Home from './Home.js';
-import Video from './Video.js';
-
-export default function App() {
-  const [activeTab, setActiveTab] = useState('video');
-
-  return (
-    <>
-      <TabButton
-        isActive={activeTab === 'home'}
-        onClick={() => setActiveTab('home')}
-      >
-        Home
-      </TabButton>
-      <TabButton
-        isActive={activeTab === 'video'}
-        onClick={() => setActiveTab('video')}
-      >
-        Video
-      </TabButton>
-
-      <hr />
-
-      <Activity mode={activeTab === 'home' ? 'visible' : 'hidden'}>
-        <Home />
-      </Activity>
-      <Activity mode={activeTab === 'video' ? 'visible' : 'hidden'}>
-        <Video />
-      </Activity>
-    </>
-  );
-}
-```
-
-```js src/TabButton.js hidden
-export default function TabButton({ onClick, children, isActive }) {
-  if (isActive) {
-    return <b>{children}</b>
-  }
-
-  return (
-    <button onClick={onClick}>
-      {children}
-    </button>
-  );
-}
-```
-
-```js src/Home.js
-export default function Home() {
-  return (
-    <p>Welcome to my profile!</p>
-  );
-}
-```
-
-```js src/Video.js 
-export default function Video() {
-  return (
-    <video
-      controls
-      playsInline
-      // 'Big Buck Bunny' licensed under CC 3.0 by the Blender foundation. Hosted by archive.org
-      src="https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4"
-    />
-
-  );
-}
-```
-
-```css
-body { height: 275px; }
-button { margin-right: 10px }
-b { display: inline-block; margin-right: 10px; }
-.pending { color: #777; }
-video { width: 300px; margin-top: 10px; aspect-ratio: 16/9; }
-```
-
-```json package.json hidden
-{
-  "dependencies": {
-    "react": "experimental",
-    "react-dom": "experimental",
-    "react-scripts": "latest",
-    "toastify-js": "1.12.0"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  }
-}
-```
-
-</Sandpack>
-
-Whoops! The video and audio continue to play even after it's been hidden, because the tab's `<video>` element is still in the DOM.
-
-To fix this, we can add an Effect with a cleanup function that pauses the video:
-
-```jsx {2,4-10,14}
-export default function VideoTab() {
-  const ref = useRef();
-
-  useLayoutEffect(() => {
-    const videoRef = ref.current;
-
-    return () => {
-      videoRef.pause()
-    }
-  }, []);
-
-  return (
-    <video
-      ref={ref}
-      controls
-      playsInline
-      src="..."
-    />
-
-  );
-}
-```
-
-We call `useLayoutEffect` instead of `useEffect` because conceptually the clean-up code is tied to the component's UI being visually hidden. If we used a regular effect, the code could be delayed by (say) a re-suspending Suspense boundary or a View Transition.
-
-Let's see the new behavior. Try playing the video, switching to the Home tab, then back to the Video tab:
-
-<Sandpack>
-
-```js src/App.js active
-import { useState, unstable_Activity as Activity } from 'react';
-import TabButton from './TabButton.js';
-import Home from './Home.js';
-import Video from './Video.js';
-
-export default function App() {
-  const [activeTab, setActiveTab] = useState('video');
-
-  return (
-    <>
-      <TabButton
-        isActive={activeTab === 'home'}
-        onClick={() => setActiveTab('home')}
-      >
-        Home
-      </TabButton>
-      <TabButton
-        isActive={activeTab === 'video'}
-        onClick={() => setActiveTab('video')}
-      >
-        Video
-      </TabButton>
-
-      <hr />
-
-      <Activity mode={activeTab === 'home' ? 'visible' : 'hidden'}>
-        <Home />
-      </Activity>
-      <Activity mode={activeTab === 'video' ? 'visible' : 'hidden'}>
-        <Video />
-      </Activity>
-    </>
-  );
-}
-```
-
-```js src/TabButton.js hidden
-export default function TabButton({ onClick, children, isActive }) {
-  if (isActive) {
-    return <b>{children}</b>
-  }
-
-  return (
-    <button onClick={onClick}>
-      {children}
-    </button>
-  );
-}
-```
-
-```js src/Home.js
-export default function Home() {
-  return (
-    <p>Welcome to my profile!</p>
-  );
-}
-```
-
-```js src/Video.js 
-import { useRef, useLayoutEffect } from 'react';
-
-export default function Video() {
-  const ref = useRef();
-
-  useLayoutEffect(() => {
-    const videoRef = ref.current
-
-    return () => {
-      videoRef.pause()
-    };
-  }, [])
-
-  return (
-    <video
-      ref={ref}
-      controls
-      playsInline
-      // 'Big Buck Bunny' licensed under CC 3.0 by the Blender foundation. Hosted by archive.org
-      src="https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4"
-    />
-
-  );
-}
-```
-
-```css
-body { height: 275px; }
-button { margin-right: 10px }
-b { display: inline-block; margin-right: 10px; }
-.pending { color: #777; }
-video { width: 300px; margin-top: 10px; aspect-ratio: 16/9; }
-```
-
-```json package.json hidden
-{
-  "dependencies": {
-    "react": "experimental",
-    "react-dom": "experimental",
-    "react-scripts": "latest",
-    "toastify-js": "1.12.0"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  }
-}
-```
-
-</Sandpack>
-
-It works great! Our cleanup function ensures that the video stops playing if it's ever hidden by an Activity boundary, and even better, because the `<video>` tag is never destroyed, the timecode is preserved, and the video itself doesn't need to be initialized or downloaded again when the user switches back to keep watching it.
-
-This is a great example of using Activity to preserve ephemeral DOM state for parts of the UI that become hidden, but the user is likely to interact with again soon.
-
----
-
-Our example illustrates that for certain tags like `<video>`, unmounting and hiding have different behavior. If a component renders DOM that has a side effect, and you want to prevent that side effect when an Activity boundary hides it, add an Effect with a return function to clean it up.
-
-The most common cases of this will be from the following tags:
-
-  - `<video>`
-  - `<audio>`
-  - `<iframe>`
-
-Typically, though, most of your React components should already be robust to being hidden by an Activity boundary. And conceptually, you should think of "hidden" Activities as being unmounted.
-
-To eagerly discover other Effects that don't have proper cleanup, which is important not only for Activity boundaries but for many other behaviors in React, we recommend using [`<StrictMode>`](/reference/react/StrictMode). 
-
----
-
-
-### My hidden components have Effects that aren't running {/*my-hidden-components-have-effects-that-arent-running*/}
-
-When an `<Activity>` is "hidden", all its children's Effects are cleaned up. Conceptually, the children are unmounted, but React saves their state for later. This is a feature of Activity because it means subscriptions won't be active for hidden parts of the UI, reducing the amount of work needed for hidden content.
-
-If you're relying on an Effect mounting to clean up a component's side effects, refactor the Effect to do the work in the returned cleanup function instead.
-
-To eagerly find problematic Effects, we recommend adding [`<StrictMode>`](/reference/react/StrictMode) which will eagerly perform Activity unmounts and mounts to catch any unexpected side-effects. 
+        isActive={activeTab === '
