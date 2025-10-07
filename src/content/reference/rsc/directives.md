@@ -1,4 +1,4 @@
----
+```md
 title: Diretivas
 ---
 
@@ -20,3 +20,4 @@ Diretivas fornecem instruções para [bundlers compatíveis com Componentes do S
 
 * [`'use client'`](/reference/rsc/use-client) permite que você marque qual código é executado no cliente.
 * [`'use server'`](/reference/rsc/use-server) marca funções do lado do servidor que podem ser chamadas do código do lado do cliente.
+```
