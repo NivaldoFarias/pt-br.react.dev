@@ -1,3 +1,4 @@
+```md
 ---
 title: Ferramenta de desenvolvedor do React
 ---
@@ -60,3 +61,4 @@ Para inspecionar aplicativos construídos com [React Native](https://reactnative
 [Saiba mais sobre depuração no React Native.](https://reactnative.dev/docs/debugging)
 
 > Para versões do React Native anteriores à 0.76, use a versão independente do React DevTools seguindo o guia [Safari e outros navegadores](#safari-and-other-browsers) acima.
+```
