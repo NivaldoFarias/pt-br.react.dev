@@ -1,4 +1,4 @@
----
+```md
 title: Avisos de Depreciação do react-dom/test-utils
 ---
 
@@ -85,3 +85,4 @@ Esteja ciente de que `fireEvent` dispara um evento real no elemento e não apena
 - `findRenderedComponentWithType()`
 - `renderIntoDocument`
 - `Simulate`
+```
