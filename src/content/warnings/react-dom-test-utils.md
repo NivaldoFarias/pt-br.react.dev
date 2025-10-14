@@ -2,9 +2,9 @@
 title: Avisos de Depreciação do react-dom/test-utils
 ---
 
-## ReactDOMTestUtils.act() warning {/*reactdomtestutilsact-warning*/}
+## Aviso do `act` do `ReactDOMTestUtils` {/*reactdomtestutilsact-warning*/}
 
-O `act` de `react-dom/test-utils` foi depreciado em favor do `act` do `react`.
+O `act` de `react-dom/test-utils` foi descontinuado em favor do `act` do `react`.
 
 Antes:
 
@@ -18,13 +18,13 @@ Depois:
 import {act} from 'react';
 ```
 
-## Resto das APIs do ReactDOMTestUtils {/*rest-of-reactdomtestutils-apis*/}
+## Resto das APIs do `ReactDOMTestUtils` {/*rest-of-reactdomtestutils-apis*/}
 
 Todas as APIs, exceto `act`, foram removidas.
 
 A equipe do React recomenda migrar seus testes para [@testing-library/react](https://testing-library.com/docs/react-testing-library/intro/) para uma experiência de teste moderna e bem suportada.
 
-### ReactDOMTestUtils.renderIntoDocument {/*reactdomtestutilsrenderintodocument*/}
+### `ReactDOMTestUtils.renderIntoDocument` {/*reactdomtestutilsrenderintodocument*/}
 
 O `renderIntoDocument` pode ser substituído por `render` de `@testing-library/react`.
 
@@ -44,7 +44,7 @@ import {render} from '@testing-library/react';
 render(<Component />);
 ```
 
-### ReactDOMTestUtils.Simulate {/*reactdomtestutilssimulate*/}
+### `ReactDOMTestUtils.Simulate` {/*reactdomtestutilssimulate*/}
 
 `Simulate` pode ser substituído por `fireEvent` de `@testing-library/react`.
 
