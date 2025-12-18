@@ -19,8 +19,8 @@ Use a ferramenta de desenvolvedor do React para inspecionar [componentes](/learn
 
 A forma mais fácil de depurar websites construídos com React é instalar a ferramenta de desenvolvedor do React no navegador. Ela está disponível para vários navegadores populares:
 
-* [Instalar para **Chrome**](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en)
-* [Instalar para **Firefox**](https://addons.mozilla.org/en-US/firefox/addon/react-devtools/)
+* [Instalar para **Chrome**](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=pt-BR)
+* [Instalar para **Firefox**](https://addons.mozilla.org/pt-BR/firefox/addon/react-devtools/)
 * [Instalar para **Edge**](https://microsoftedge.microsoft.com/addons/detail/react-developer-tools/gpphkfbcpidddadnkolkpfckpihlkkil)
 
 Agora, se você visitar um website **construído com React**, você verá os painéis _Components_ e _Profiler_.
