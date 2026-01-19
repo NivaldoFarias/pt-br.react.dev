@@ -1,40 +1,40 @@
 ---
-title: "React DOM Components"
+title: "Componentes do React DOM"
 ---
 
 <Intro>
 
-React supports all of the browser built-in [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML/Element) and [SVG](https://developer.mozilla.org/en-US/docs/Web/SVG/Element) components.
+O React suporta todos os [componentes HTML](https://developer.mozilla.org/en-US/docs/Web/HTML/Element) e [SVG](https://developer.mozilla.org/en-US/docs/Web/SVG/Element) nativos do navegador.
 
 </Intro>
 
 ---
 
-## Common components {/*common-components*/}
+## Componentes comuns {/*common-components*/}
 
-All of the built-in browser components support some props and events.
+Todos os componentes nativos do navegador suportam algumas props e eventos.
 
-* [Common components (e.g. `<div>`)](/reference/react-dom/components/common)
+* [Componentes comuns (ex: `<div>`)](/reference/react-dom/components/common)
 
-This includes React-specific props like `ref` and `dangerouslySetInnerHTML`.
+Isso inclui props específicas do React como `ref` e `dangerouslySetInnerHTML`.
 
 ---
 
-## Form components {/*form-components*/}
+## Componentes de formulário {/*form-components*/}
 
-These built-in browser components accept user input:
+Estes componentes nativos do navegador aceitam entrada do usuário:
 
 * [`<input>`](/reference/react-dom/components/input)
 * [`<select>`](/reference/react-dom/components/select)
 * [`<textarea>`](/reference/react-dom/components/textarea)
 
-They are special in React because passing the `value` prop to them makes them *[controlled.](/reference/react-dom/components/input#controlling-an-input-with-a-state-variable)*
+Eles são especiais no React porque passar a prop `value` para eles os torna *[controlados.](/reference/react-dom/components/input#controlling-an-input-with-a-state-variable)*
 
 ---
 
-## Resource and Metadata Components {/*resource-and-metadata-components*/}
+## Componentes de Recurso e Metadados {/*resource-and-metadata-components*/}
 
-These built-in browser components let you load external resources or annotate the document with metadata:
+Estes componentes nativos do navegador permitem carregar recursos externos ou anotar o documento com metadados:
 
 * [`<link>`](/reference/react-dom/components/link)
 * [`<meta>`](/reference/react-dom/components/meta)
@@ -42,13 +42,13 @@ These built-in browser components let you load external resources or annotate th
 * [`<style>`](/reference/react-dom/components/style)
 * [`<title>`](/reference/react-dom/components/title)
 
-They are special in React because React can render them into the document head, suspend while resources are loading, and enact other behaviors that are described on the reference page for each specific component.
+Eles são especiais no React porque o React pode renderizá-los no cabeçalho do documento, suspender enquanto os recursos estão carregando e executar outros comportamentos descritos na página de referência para cada componente específico.
 
 ---
 
-## All HTML components {/*all-html-components*/}
+## Todos os componentes HTML {/*all-html-components*/}
 
-React supports all built-in browser HTML components. This includes:
+O React suporta todos os componentes HTML nativos do navegador. Isso inclui:
 
 * [`<aside>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/aside)
 * [`<audio>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio)
@@ -154,39 +154,39 @@ React supports all built-in browser HTML components. This includes:
 
 <Note>
 
-Similar to the [DOM standard,](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model) React uses a `camelCase` convention for prop names. For example, you'll write `tabIndex` instead of `tabindex`. You can convert existing HTML to JSX with an [online converter.](https://transform.tools/html-to-jsx)
+Semelhante ao [padrão DOM,](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model) o React usa uma convenção `camelCase` para nomes de props. Por exemplo, você escreverá `tabIndex` em vez de `tabindex`. Você pode converter HTML existente para JSX com um [conversor online.](https://transform.tools/html-to-jsx)
 
 </Note>
 
 ---
 
-### Custom HTML elements {/*custom-html-elements*/}
+### Elementos HTML personalizados {/*custom-html-elements*/}
 
-If you render a tag with a dash, like `<my-element>`, React will assume you want to render a [custom HTML element.](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements)
+Se você renderizar uma tag com um hífen, como `<my-element>`, o React assumirá que você deseja renderizar um [elemento HTML personalizado.](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements)
 
-If you render a built-in browser HTML element with an [`is`](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/is) attribute, it will also be treated as a custom element.
+Se você renderizar um elemento HTML nativo do navegador com um atributo [`is`](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/is), ele também será tratado como um elemento personalizado.
 
-#### Setting values on custom elements {/*attributes-vs-properties*/}
+#### Definindo valores em elementos personalizados {/*attributes-vs-properties*/}
 
-Custom elements have two methods of passing data into them:
+Elementos personalizados têm dois métodos de passar dados para eles:
 
-1) Attributes: Which are displayed in markup and can only be set to string values
-2) Properties: Which are not displayed in markup and can be set to arbitrary JavaScript values
+1) Atributos: Que são exibidos na marcação e só podem ser definidos como valores de string
+2) Propriedades: Que não são exibidas na marcação e podem ser definidas como valores JavaScript arbitrários
 
-By default, React will pass values bound in JSX as attributes:
+Por padrão, o React passará valores vinculados em JSX como atributos:
 
 ```jsx
 <my-element value="Hello, world!"></my-element>
 ```
 
-Non-string JavaScript values passed to custom elements will be serialized by default:
+Valores JavaScript não-string passados para elementos personalizados serão serializados por padrão:
 
 ```jsx
-// Will be passed as `"1,2,3"` as the output of `[1,2,3].toString()`
+// Será passado como `"1,2,3"` como resultado de `[1,2,3].toString()`
 <my-element value={[1,2,3]}></my-element>
 ```
 
-React will, however, recognize an custom element's property as one that it may pass arbitrary values to if the property name shows up on the class during construction:
+No entanto, o React reconhecerá a propriedade de um elemento personalizado como uma para a qual ele pode passar valores arbitrários se o nome da propriedade aparecer na classe durante a construção:
 
 <Sandpack>
 
@@ -205,8 +205,8 @@ root.render(<App />);
 export class MyElement extends HTMLElement {
   constructor() {
     super();
-    // The value here will be overwritten by React 
-    // when initialized as an element
+    // O valor aqui será sobrescrito pelo React 
+    // quando inicializado como um elemento
     this.value = undefined;
   }
 
@@ -224,9 +224,9 @@ export function App() {
 
 </Sandpack>
 
-#### Listening for events on custom elements {/*custom-element-events*/}
+#### Ouvindo eventos em elementos personalizados {/*custom-element-events*/}
 
-A common pattern when using custom elements is that they may dispatch [`CustomEvent`s](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent) rather than accept a function to call when an event occur. You can listen for these events using an `on` prefix when binding to the event via JSX.
+Um padrão comum ao usar elementos personalizados é que eles podem disparar [`CustomEvent`s](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent) em vez de aceitar uma função para chamar quando um evento ocorre. Você pode ouvir esses eventos usando um prefixo `on` ao vincular ao evento via JSX.
 
 <Sandpack>
 
@@ -285,105 +285,105 @@ export function App() {
 
 <Note>
 
-Events are case-sensitive and support dashes (`-`). Preserve the casing of the event and include all dashes when listening for custom element's events:
+Eventos diferenciam maiúsculas de minúsculas e suportam hifens (`-`). Preserve a capitalização do evento e inclua todos os hifens ao ouvir eventos de elementos personalizados:
 
 ```jsx
-// Listens for `say-hi` events
+// Ouve eventos `say-hi`
 <my-element onsay-hi={console.log}></my-element>
-// Listens for `sayHi` events
+// Ouve eventos `sayHi`
 <my-element onsayHi={console.log}></my-element>
 ```
 
 </Note>
 ---
 
-## All SVG components {/*all-svg-components*/}
+## Todos os componentes SVG {/*all-svg-components*/}
 
-React supports all built-in browser SVG components. This includes:
+O React suporta todos os componentes SVG nativos do navegador. Isso inclui:
 
-* [`<a>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/a)
-* [`<animate>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/animate)
-* [`<animateMotion>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/animateMotion)
-* [`<animateTransform>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/animateTransform)
-* [`<circle>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle)
-* [`<clipPath>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/clipPath)
-* [`<defs>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs)
-* [`<desc>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/desc)
-* [`<discard>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/discard)
-* [`<ellipse>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/ellipse)
-* [`<feBlend>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feBlend)
-* [`<feColorMatrix>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feColorMatrix)
-* [`<feComponentTransfer>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feComponentTransfer)
-* [`<feComposite>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feComposite)
-* [`<feConvolveMatrix>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feConvolveMatrix)
-* [`<feDiffuseLighting>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feDiffuseLighting)
-* [`<feDisplacementMap>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feDisplacementMap)
-* [`<feDistantLight>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feDistantLight)
-* [`<feDropShadow>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feDropShadow)
-* [`<feFlood>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feFlood)
-* [`<feFuncA>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feFuncA)
-* [`<feFuncB>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feFuncB)
-* [`<feFuncG>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feFuncG)
-* [`<feFuncR>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feFuncR)
-* [`<feGaussianBlur>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feGaussianBlur)
-* [`<feImage>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feImage)
-* [`<feMerge>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feMerge)
-* [`<feMergeNode>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feMergeNode)
-* [`<feMorphology>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feMorphology)
-* [`<feOffset>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feOffset)
-* [`<fePointLight>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/fePointLight)
-* [`<feSpecularLighting>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feSpecularLighting)
-* [`<feSpotLight>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feSpotLight)
-* [`<feTile>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feTile)
-* [`<feTurbulence>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feTurbulence)
-* [`<filter>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/filter)
-* [`<foreignObject>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/foreignObject)
-* [`<g>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/g)
+* [`<a>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/a)
+* [`<animate>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/animate)
+* [`<animateMotion>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/animateMotion)
+* [`<animateTransform>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/animateTransform)
+* [`<circle>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/circle)
+* [`<clipPath>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/clipPath)
+* [`<defs>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/defs)
+* [`<desc>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/desc)
+* [`<discard>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/discard)
+* [`<ellipse>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/ellipse)
+* [`<feBlend>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feBlend)
+* [`<feColorMatrix>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feColorMatrix)
+* [`<feComponentTransfer>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feComponentTransfer)
+* [`<feComposite>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feComposite)
+* [`<feConvolveMatrix>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feConvolveMatrix)
+* [`<feDiffuseLighting>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feDiffuseLighting)
+* [`<feDisplacementMap>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feDisplacementMap)
+* [`<feDistantLight>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feDistantLight)
+* [`<feDropShadow>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feDropShadow)
+* [`<feFlood>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feFlood)
+* [`<feFuncA>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feFuncA)
+* [`<feFuncB>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feFuncB)
+* [`<feFuncG>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feFuncG)
+* [`<feFuncR>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feFuncR)
+* [`<feGaussianBlur>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feGaussianBlur)
+* [`<feImage>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feImage)
+* [`<feMerge>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feMerge)
+* [`<feMergeNode>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feMergeNode)
+* [`<feMorphology>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feMorphology)
+* [`<feOffset>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feOffset)
+* [`<fePointLight>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/fePointLight)
+* [`<feSpecularLighting>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feSpecularLighting)
+* [`<feSpotLight>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feSpotLight)
+* [`<feTile>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feTile)
+* [`<feTurbulence>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/feTurbulence)
+* [`<filter>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/filter)
+* [`<foreignObject>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/foreignObject)
+* [`<g>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/g)
 * `<hatch>`
 * `<hatchpath>`
-* [`<image>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/image)
-* [`<line>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/line)
-* [`<linearGradient>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient)
-* [`<marker>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/marker)
-* [`<mask>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/mask)
-* [`<metadata>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/metadata)
-* [`<mpath>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/mpath)
-* [`<path>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/path)
-* [`<pattern>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/pattern)
-* [`<polygon>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/polygon)
-* [`<polyline>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/polyline)
-* [`<radialGradient>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/radialGradient)
-* [`<rect>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/rect)
-* [`<script>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/script)
-* [`<set>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/set)
-* [`<stop>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
-* [`<style>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/style)
-* [`<svg>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/svg)
-* [`<switch>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/switch)
-* [`<symbol>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/symbol)
-* [`<text>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/text)
-* [`<textPath>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/textPath)
-* [`<title>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title)
-* [`<tspan>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/tspan)
-* [`<use>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/use)
-* [`<view>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/view)
+* [`<image>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/image)
+* [`<line>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/line)
+* [`<linearGradient>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/linearGradient)
+* [`<marker>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/marker)
+* [`<mask>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/mask)
+* [`<metadata>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/metadata)
+* [`<mpath>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/mpath)
+* [`<path>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/path)
+* [`<pattern>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/pattern)
+* [`<polygon>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/polygon)
+* [`<polyline>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/polyline)
+* [`<radialGradient>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/radialGradient)
+* [`<rect>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/rect)
+* [`<script>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/script)
+* [`<set>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/set)
+* [`<stop>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/stop)
+* [`<style>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/style)
+* [`<svg>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/svg)
+* [`<switch>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/switch)
+* [`<symbol>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/symbol)
+* [`<text>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/text)
+* [`<textPath>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/textPath)
+* [`<title>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/title)
+* [`<tspan>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/tspan)
+* [`<use>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/use)
+* [`<view>`](https://developer.mozilla.org/pt-BR/docs/Web/SVG/Element/view)
 
 <Note>
 
-Similar to the [DOM standard,](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model) React uses a `camelCase` convention for prop names. For example, you'll write `tabIndex` instead of `tabindex`. You can convert existing SVG to JSX with an [online converter.](https://transform.tools/)
+Assim como no [padrão DOM,](https://developer.mozilla.org/pt-BR/docs/Web/API/Document_Object_Model) o React usa a convenção `camelCase` para nomes de props. Por exemplo, você escreverá `tabIndex` em vez de `tabindex`. Você pode converter SVG existente para JSX com um [conversor online.](https://transform.tools/)
 
-Namespaced attributes also have to be written without the colon:
+Atributos com namespaces também precisam ser escritos sem os dois pontos:
 
-* `xlink:actuate` becomes `xlinkActuate`.
-* `xlink:arcrole` becomes `xlinkArcrole`.
-* `xlink:href` becomes `xlinkHref`.
-* `xlink:role` becomes `xlinkRole`.
-* `xlink:show` becomes `xlinkShow`.
-* `xlink:title` becomes `xlinkTitle`.
-* `xlink:type` becomes `xlinkType`.
-* `xml:base` becomes `xmlBase`.
-* `xml:lang` becomes `xmlLang`.
-* `xml:space` becomes `xmlSpace`.
-* `xmlns:xlink` becomes `xmlnsXlink`.
+* `xlink:actuate` se torna `xlinkActuate`.
+* `xlink:arcrole` se torna `xlinkArcrole`.
+* `xlink:href` se torna `xlinkHref`.
+* `xlink:role` se torna `xlinkRole`.
+* `xlink:show` se torna `xlinkShow`.
+* `xlink:title` se torna `xlinkTitle`.
+* `xlink:type` se torna `xlinkType`.
+* `xml:base` se torna `xmlBase`.
+* `xml:lang` se torna `xmlLang`.
+* `xml:space` se torna `xmlSpace`.
+* `xmlns:xlink` se torna `xmlnsXlink`.
 
 </Note>
