@@ -1,16 +1,16 @@
 ---
-title: Configuration
+title: Configuração
 ---
 
 <Intro>
 
-This page lists all configuration options available in React Compiler.
+Esta página lista todas as opções de configuração disponíveis no React Compiler.
 
 </Intro>
 
 <Note>
 
-For most apps, the default options should work out of the box. If you have a special need, you can use these advanced options.
+Para a maioria dos aplicativos, as opções padrão devem funcionar imediatamente. Se você tiver uma necessidade especial, pode usar estas opções avançadas.
 
 </Note>
 
@@ -29,11 +29,11 @@ module.exports = {
 
 ---
 
-## Compilation Control {/*compilation-control*/}
+## Controle de Compilação {/*compilation-control*/}
 
-These options control *what* the compiler optimizes and *how* it selects components and hooks to compile.
+Estas opções controlam *o que* o compilador otimiza e *como* ele seleciona componentes e hooks para compilar.
 
-* [`compilationMode`](/reference/react-compiler/compilationMode) controls the strategy for selecting functions to compile (e.g., all functions, only annotated ones, or intelligent detection).
+* [`compilationMode`](/reference/react-compiler/compilationMode) controla a estratégia para selecionar funções a serem compiladas (por exemplo, todas as funções, apenas as anotadas ou a detecção inteligente).
 
 ```js
 {
@@ -43,11 +43,11 @@ These options control *what* the compiler optimizes and *how* it selects compone
 
 ---
 
-## Version Compatibility {/*version-compatibility*/}
+## Compatibilidade de Versão {/*version-compatibility*/}
 
-React version configuration ensures the compiler generates code compatible with your React version.
+A configuração da versão do React garante que o compilador gere código compatível com sua versão do React.
 
-[`target`](/reference/react-compiler/target) specifies which React version you're using (17, 18, or 19).
+[`target`](/reference/react-compiler/target) especifica qual versão do React você está usando (17, 18 ou 19).
 
 ```js
 // For React 18 projects
@@ -58,14 +58,14 @@ React version configuration ensures the compiler generates code compatible with 
 
 ---
 
-## Error Handling {/*error-handling*/}
+## Tratamento de Erros {/*error-handling*/}
 
-These options control how the compiler responds to code that doesn't follow the [Rules of React](/reference/rules).
+Estas opções controlam como o compilador responde ao código que não segue as [Regras do React](/reference/rules).
 
-[`panicThreshold`](/reference/react-compiler/panicThreshold) determines whether to fail the build or skip problematic components.
+[`panicThreshold`](/reference/react-compiler/panicThreshold) determina se a compilação falhará ou se os componentes problemáticos serão ignorados.
 
 ```js
-// Recommended for production
+// Recomendado para produção
 {
   panicThreshold: 'none' // Skip components with errors instead of failing the build
 }
@@ -73,11 +73,11 @@ These options control how the compiler responds to code that doesn't follow the 
 
 ---
 
-## Debugging {/*debugging*/}
+## Depuração {/*debugging*/}
 
-Logging and analysis options help you understand what the compiler is doing.
+As opções de registro e análise ajudam você a entender o que o compilador está fazendo.
 
-[`logger`](/reference/react-compiler/logger) provides custom logging for compilation events.
+[`logger`](/reference/react-compiler/logger) fornece registro personalizado para eventos de compilação.
 
 ```js
 {
@@ -95,9 +95,9 @@ Logging and analysis options help you understand what the compiler is doing.
 
 ## Feature Flags {/*feature-flags*/}
 
-Conditional compilation lets you control when optimized code is used.
+A compilação condicional permite que você controle quando o código otimizado é usado.
 
-[`gating`](/reference/react-compiler/gating) enables runtime feature flags for A/B testing or gradual rollouts.
+[`gating`](/reference/react-compiler/gating) habilita feature flags em tempo de execução para testes A/B ou lançamentos graduais.
 
 ```js
 {
@@ -110,11 +110,11 @@ Conditional compilation lets you control when optimized code is used.
 
 ---
 
-## Common Configuration Patterns {/*common-patterns*/}
+## Padrões de Configuração Comuns {/*common-patterns*/}
 
-### Default configuration {/*default-configuration*/}
+### Configuração padrão {/*default-configuration*/}
 
-For most React 19 applications, the compiler works without configuration:
+Para a maioria dos aplicativos React 19, o compilador funciona sem configuração:
 
 ```js
 // babel.config.js
@@ -125,9 +125,9 @@ module.exports = {
 };
 ```
 
-### React 17/18 projects {/*react-17-18*/}
+### Projetos React 17/18 {/*react-17-18*/}
 
-Older React versions need the runtime package and target configuration:
+Versões mais antigas do React precisam do pacote de tempo de execução e da configuração de destino:
 
 ```bash
 npm install react-compiler-runtime@rc
@@ -139,13 +139,12 @@ npm install react-compiler-runtime@rc
 }
 ```
 
-### Incremental adoption {/*incremental-adoption*/}
+### Adoção incremental {/*incremental-adoption*/}
 
-Start with specific directories and expand gradually:
+Comece com diretórios específicos e expanda gradualmente:
 
 ```js
 {
   compilationMode: 'annotation' // Only compile "use memo" functions
 }
 ```
-
