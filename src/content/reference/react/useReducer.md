@@ -159,7 +159,7 @@ button { display: block; margin-top: 10px; }
 
 </Sandpack>
 
-`useReducer` é muito semelhante a [`useState`](/reference/react/useState), mas permite que você mova a lógica de atualização de estado dos manipuladores de eventos para uma única função fora do seu componente. Leia mais sobre [como escolher entre `useState` e `useReducer`.](/learn/extracting-state-logic-into-a-reducer#comparing-usestate-and-usereducer)
+`useReducer` é muito semelhante ao [`useState`](/reference/react/useState), mas permite que você mova a lógica de atualização de estado dos manipuladores de eventos para uma única função fora do seu componente. Leia mais sobre [como escolher entre `useState` e `useReducer`.](/learn/extracting-state-logic-into-a-reducer#comparing-usestate-and-usereducer)
 
 ---
 
@@ -174,7 +174,7 @@ function reducer(state, action) {
 }
 ```
 
-Então você precisa preencher o código que irá calcular e retornar o próximo estado. Por convenção, é comum escrevê-lo como uma declaração [`switch`.](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Statements/switch) Para cada `case` no `switch`, calcule e retorne algum próximo estado.
+Então você precisa preencher o código que irá calcular e retornar o próximo estado. Por convenção, é comum escrevê-lo como uma instrução [`switch`.](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Statements/switch) Para cada `case` no `switch`, calcule e retorne algum próximo estado.
 
 ```js {4-7,10-13}
 function reducer(state, action) {
@@ -196,7 +196,7 @@ function reducer(state, action) {
 }
 ```
 
-As ações podem ter qualquer formato. Por convenção, é comum passar objetos com uma propriedade `type` identificando a ação. Ela deve incluir as informações mínimas necessárias que o reducer precisa para computar o próximo estado.
+As ações podem ter qualquer formato. Por convenção, é comum passar objetos com uma propriedade `type` identificando a ação. Ela deve incluir as informações mínimas necessárias que o reducer precisa para calcular o próximo estado.
 
 ```js {5,9-12}
 function Form() {
@@ -217,7 +217,7 @@ function Form() {
 
 Os nomes dos tipos de ação são locais para o seu componente. [Cada ação descreve uma única interação, mesmo que isso leve a múltiplas mudanças nos dados.](/learn/extracting-state-logic-into-a-reducer#writing-reducers-well) O formato do estado é arbitrário, mas geralmente será um objeto ou um array.
 
-Leia [extraindo a lógica de estado em um reducer](/learn/extracting-state-logic-into-a-reducer) para aprender mais.
+Leia [extraindo a lógica de estado em um reducer](/learn/extracting-state-logic-into-a-reducer) para saber mais.
 
 <Pitfall>
 
@@ -247,7 +247,7 @@ function reducer(state, action) {
     }
 ```
 
-Leia [atualizando objetos no estado](/learn/updating-objects-in-state) e [atualizando arrays no estado](/learn/updating-arrays-in-state) para aprender mais.
+Leia [atualizando objetos no estado](/learn/updating-objects-in-state) e [atualizando arrays no estado](/learn/updating-arrays-in-state) para saber mais.
 
 </Pitfall>
 
@@ -495,6 +495,236 @@ function Task({ task, onChange, onDelete }) {
       />
       {taskContent}
       <button onClick={() => onDelete(task.id)}>
+        Deletar
+      </button>
+    </label>
+  );
+}
+```
+
+```css
+button { margin: 5px; }
+li { list-style-type: none; }
+ul, li { margin: 0; padding: 0; }
+```
+
+</Sandpack>
+
+<Solution />
+
+#### Escrevendo uma lógica de atualização concisa com Immer {/*writing-concise-update-logic-with-immer*/}
+
+Se atualizar arrays e objetos sem mutação parecer tedioso, você pode usar uma biblioteca como [Immer](https://github.com/immerjs/use-immer#useimmerreducer) para reduzir o código repetitivo. Immer permite que você escreva um código conciso como se estivesse mutando objetos, mas por baixo dos panos ele realiza atualizações imutáveis:
+
+<Sandpack>
+
+```js src/App.js
+import { useImmerReducer } from 'use-immer';
+import AddTask from './AddTask.js';
+import TaskList from './TaskList.js';
+
+function tasksReducer(draft, action) {
+  switch (action.type) {
+    case 'added': {
+      draft.push({
+        id: action.id,
+        text: action.text,
+        done: false
+      });
+      break;
+    }
+    case 'changed': {
+      const index = draft.findIndex(t =>
+        t.id === action.task.id
+      );
+      draft[index] = action.task;
+      break;
+    }
+    case 'deleted': {
+      return draft.filter(t => t.id !== action.id);
+    }
+    default: {
+      throw Error('Unknown action: ' + action.type);
+    }
+  }
+}
+
+export default function TaskApp() {
+  const [tasks, dispatch] = useImmerReducer(
+    tasksReducer,
+    initialTasks
+  );
+
+  function handleAddTask(text) {
+    dispatch({
+      type: 'added',
+      id: nextId++,
+      text: text,
+    });
+  }
+
+  function handleChangeTask(task) {
+    dispatch({
+      type: 'changed',
+      task: task
+    });
+  }
+
+  function handleDeleteTask(taskId) {
+    dispatch({
+      type: 'deleted',
+      id: taskId
+    });
+  }
+
+  return (
+    <>
+      <h1>Prague itinerary</h1>
+      <AddTask
+        onAddTask={handleAddTask}
+      />
+      <TaskList
+        tasks={tasks}
+        onChangeTask={handleChangeTask}
+        onDeleteTask={handleDeleteTask}
+      />
+    </>
+  );
+}
+
+let nextId = 3;
+const initialTasks = [
+  { id: 0, text: 'Visit Kafka Museum', done: true },
+  { id: 1, text: 'Watch a puppet show', done: false },
+  { id: 2, text: 'Lennon Wall pic', done: false },
+];
+```
+
+```js src/AddTask.js hidden
+import { useState } from 'react';
+
+export default function AddTask({ onAddTask }) {
+  const [text, setText] = useState('');
+  return (
+    <>
+      <input
+        placeholder="Adicionar tarefa"
+        value={text}
+        onChange={e => setText(e.target.value)}
+      />
+      <button onClick={() => {
+        setText('');
+        onAddTask(text);
+      }}>Adicionar</button>
+    </>
+  )
+}
+```
+
+```js src/TaskList.js hidden
+import { useState } from 'react';
+
+export default function TaskList({
+  tasks,
+  onChangeTask,
+  onDeleteTask
+}) {
+  return (
+    <ul>
+      {tasks.map(task => (
+        <li key={task.id}>
+          <Task
+            task={task}
+            onChange={onChangeTask}
+            onDelete={onDeleteTask}
+          />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Task({ task, onChange, onDelete }) {
+  const [isEditing, setIsEditing] = useState(false);
+  let taskContent;
+  if (isEditing) {
+    taskContent = (
+      <>
+        <input
+          value={task.text}
+          onChange={e => {
+            onChange({
+              ...task,
+              text: e.target.value
+            });
+          }} />
+        <button onClick={() => setIsEditing(false)}>
+          Salvar
+        </button>
+      </>
+    );
+  } else {
+    taskContent = (
+      <>
+        {task.text}
+        <button onClick={() => setIsEditing(true)}>
+          Editar
+        </button>
+      </>
+    );
+  }
+  return (
+    <label>
+      <input
+        type="checkbox"
+        checked={task.done}
+        onChange={e => {
+          onChange({
+            ...task,
+            done: e.target.checked
+          });
+        }}
+      />
+      {taskContent}
+      <button onClick={() => onDelete(task.id)}>
+        Deletar
+      </button>
+    </label>
+  );
+}
+```
+
+```css
+button { margin: 5px; }
+li { list-style-type: none; }
+ul, li { margin: 0; padding: 0; }
+```
+
+```json package.json
+{
+  "dependencies": {
+    "immer": "1.7.3",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-scripts": "latest",
+    "use-immer": "0.5.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
+```
+
+</Sandpack>
+
+<Solution />
+
+</Recipes>
+
+---
 
 
 ### Evitando recriar o estado inicial {/*avoiding-recreating-the-initial-state*/}
@@ -513,7 +743,7 @@ function TodoList({ username }) {
 
 Embora o resultado de `createInitialState(username)` seja usado apenas para a renderização inicial, você ainda está chamando essa função em cada renderização. Isso pode ser um desperdício se estiver criando grandes arrays ou realizando cálculos caros.
 
-Para resolver isso, você pode **passá-la como uma função _inicializadora_** para `useReducer` como o terceiro argumento:
+Para resolver isso, você pode **passá-lo como uma função _inicializadora_** para `useReducer` como o terceiro argumento:
 
 ```js {6}
 function createInitialState(username) {
@@ -602,7 +832,7 @@ export default function TodoList({ username }) {
       />
       <button onClick={() => {
         dispatch({ type: 'added_todo' });
-      }}>Add</button>
+      }}>Adicionar</button>
       <ul>
         {state.todos.map(item => (
           <li key={item.id}>
@@ -689,7 +919,7 @@ export default function TodoList({ username }) {
       />
       <button onClick={() => {
         dispatch({ type: 'added_todo' });
-      }}>Add</button>
+      }}>Adicionar</button>
       <ul>
         {state.todos.map(item => (
           <li key={item.id}>
@@ -713,7 +943,7 @@ export default function TodoList({ username }) {
 
 ## Solução de problemas {/*troubleshooting*/}
 
-### Eu despachei uma ação, mas o log me dá o valor antigo do estado {/*ive-dispatched-an-action-but-logging-gives-me-the-old-state-value*/}
+### Eu despachei uma ação, mas o log me dá o valor do estado antigo {/*ive-dispatched-an-action-but-logging-gives-me-the-old-state-value*/}
 
 Chamar a função `dispatch` **não altera o estado no código em execução**:
 
@@ -795,7 +1025,7 @@ function reducer(state, action) {
 
 ### Uma parte do meu estado do reducer se torna indefinida após o dispatch {/*a-part-of-my-reducer-state-becomes-undefined-after-dispatching*/}
 
-Certifique-se de que cada ramificação `case` **copie todos os campos existentes** ao retornar o novo estado:
+Certifique-se de que cada ramificação `case` **copia todos os campos existentes** ao retornar o novo estado:
 
 ```js {5}
 function reducer(state, action) {
@@ -837,7 +1067,7 @@ Você também pode usar um verificador de tipo estático como o TypeScript para 
 
 ### Estou recebendo um erro: "Muitas re-renderizações" {/*im-getting-an-error-too-many-re-renders*/}
 
-Você pode receber um erro que diz: `Muitas re-renderizações. React limita o número de renderizações para evitar um loop infinito.` Normalmente, isso significa que você está despachando incondicionalmente uma ação *durante a renderização*, então seu componente entra em um loop: renderizar, dispatch (o que causa uma renderização), renderizar, dispatch (o que causa uma renderização) e assim por diante. Muito frequentemente, isso é causado por um erro na especificação de um manipulador de eventos:
+Você pode receber um erro que diz: `Muitas re-renderizações. React limita o número de renderizações para evitar um loop infinito.` Normalmente, isso significa que você está despachando incondicionalmente uma ação *durante a renderização*, então seu componente entra em um loop: renderizar, dispatch (que causa uma renderização), renderizar, dispatch (que causa uma renderização) e assim por diante. Muito frequentemente, isso é causado por um erro na especificação de um manipulador de eventos:
 
 ```js {1-2}
 // 🚩 Errado: chama o manipulador durante a renderização
