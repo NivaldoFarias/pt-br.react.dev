@@ -4,7 +4,7 @@ title: Visão geral da referência do React
 
 <Intro>
 
-Esta seção fornece documentação de referência detalhada para trabalhar com React. Para uma introdução ao React, visite a seção [Aprender](/learn).
+Esta seção fornece documentação de referência detalhada para trabalhar com o React. Para uma introdução ao React, visite a seção [Aprender](/learn).
 
 </Intro>
 
