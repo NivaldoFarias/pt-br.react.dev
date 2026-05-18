@@ -2,7 +2,6 @@
 title: <ViewTransition>
 version: experimental
 ---
-```
 <Experimental>
 
 **Esta API é experimental e ainda não está disponível em uma versão estável do React.**
@@ -13,13 +12,14 @@ Você pode experimentá-la atualizando os pacotes do React para a versão experi
 - `react-dom@experimental`
 - `eslint-plugin-react-hooks@experimental`
 
-As versões experimentais do React podem conter erros. Não as use em produção.
+Versões experimentais do React podem conter erros. Não as utilize em produção.
 
 </Experimental>
 
 <Intro>
 
 `<ViewTransition>` permite animar elementos que são atualizados dentro de uma Transição.
+
 
 ```js
 import {unstable_ViewTransition as ViewTransition} from 'react';
@@ -39,40 +39,40 @@ import {unstable_ViewTransition as ViewTransition} from 'react';
 
 ### `<ViewTransition>` {/*viewtransition*/}
 
-Envolva elementos em `<ViewTransition>` para animá-los quando forem atualizados dentro de uma [Transição](/reference/react/useTransition). O React usa as seguintes heurísticas para determinar se uma Transição de Visualização é ativada para uma animação:
+Envolva elementos em `<ViewTransition>` para animá-los quando eles são atualizados dentro de uma [Transição](/reference/react/useTransition). O React usa as seguintes heurísticas para determinar se uma Transição de Visualização (View Transition) é ativada para uma animação:
 
-- `enter`: Se um `ViewTransition` em si for inserido nesta Transição, então isso será ativado.
-- `exit`: Se um `ViewTransition` em si for excluído nesta Transição, então isso será ativado.
-- `update`: Se um `ViewTransition` tiver alguma mutação DOM dentro dele que o React está fazendo (como uma alteração de prop) ou se o próprio limite `ViewTransition` mudar de tamanho ou posição devido a um irmão imediato. Se houver `ViewTransition` aninhados, a mutação se aplica a eles e não ao pai.
-- `share`: Se um `ViewTransition` nomeado estiver dentro de uma subárvore excluída e outro `ViewTransition` nomeado com o mesmo nome fizer parte de uma subárvore inserida na mesma Transição, eles formam uma Transição de Elemento Compartilhado e ela anima do excluído para o inserido.
+- `enter`: Se um `<ViewTransition>` em si for inserido nesta Transição, ele será ativado.
+- `exit`: Se um `<ViewTransition>` em si for excluído nesta Transição, ele será ativado.
+- `update`: Se um `<ViewTransition>` tiver quaisquer mutações no DOM dentro dele que o React esteja realizando (como uma mudança de prop) ou se o próprio limite do `<ViewTransition>` mudar de tamanho ou posição devido a um irmão imediato. Se houver `<ViewTransition>` aninhados, a mutação se aplica a eles e não ao pai.
+- `share`: Se um `<ViewTransition>` nomeado estiver dentro de uma subárvore excluída e outro `<ViewTransition>` nomeado com o mesmo nome fizer parte de uma subárvore inserida na mesma Transição, eles formarão uma Transição de Elemento Compartilhado (Shared Element Transition), e ela animará do elemento excluído para o inserido.
 
-Por padrão, `<ViewTransition>` anima com um cross-fade suave (a transição de visualização padrão do navegador). Você pode personalizar a animação fornecendo uma [Classe de Transição de Visualização](#view-transition-class) ao componente `<ViewTransition>`. Você pode personalizar animações para cada tipo de gatilho (consulte [Estilizando Transições de Visualização](#styling-view-transitions)).
+Por padrão, `<ViewTransition>` anima com um cross-fade suave (a transição de visualização padrão do navegador). Você pode personalizar a animação fornecendo uma [Classe de Transição de Visualização](#view-transition-class) para o componente `<ViewTransition>`. Você pode personalizar animações para cada tipo de gatilho (veja [Estilizando Transições de Visualização](#styling-view-transitions)).
 
 <DeepDive>
 
-#### Como `<ViewTransition>` funciona? {/*how-does-viewtransition-work*/}
+#### Como funciona o `<ViewTransition>`? {/*how-does-viewtransition-work*/}
 
-Nos bastidores, o React aplica `view-transition-name` aos estilos embutidos do nó DOM mais próximo aninhado dentro do componente `<ViewTransition>`. Se houver vários nós DOM irmãos como `<ViewTransition><div /><div /></ViewTransition>`, o React adiciona um sufixo ao nome para tornar cada um único, mas conceitualmente eles fazem parte do mesmo. O React não os aplica ansiosamente, mas apenas no momento em que esse limite deve participar de uma animação.
+Por baixo dos panos, o React aplica `view-transition-name` aos estilos inline do nó DOM mais próximo aninhado dentro do componente `<ViewTransition>`. Se houver múltiplos nós DOM irmãos como `<ViewTransition><div /><div /></ViewTransition>`, o React adicionará um sufixo ao nome para tornar cada um único, mas conceitualmente eles fazem parte do mesmo. O React não aplica isso de forma antecipada, mas apenas no momento em que o limite deve participar de uma animação.
 
-O React chama automaticamente `startViewTransition` por trás das cenas, então você nunca deve fazer isso sozinho. Na verdade, se você tiver outra coisa na página executando um ViewTransition, o React o interromperá. Portanto, é recomendável que você use o próprio React para coordená-los. Se você tinha outras maneiras de acionar ViewTransitions no passado, recomendamos que você migre para a maneira integrada.
+O React chama automaticamente `startViewTransition` por conta própria nos bastidores, então você nunca deve fazer isso. De fato, se você tiver algo mais na página executando uma Transição de Visualização, o React a interromperá. Portanto, é recomendado que você use o próprio React para coordenar essas transições. Se você tinha outras maneiras de acionar Transições de Visualização no passado, recomendamos que migre para a maneira integrada.
 
-Se houver outros React ViewTransitions já em execução, o React esperará que eles terminem antes de iniciar o próximo. No entanto, é importante ressaltar que, se houver várias atualizações acontecendo enquanto a primeira estiver em execução, todas elas serão agrupadas em uma só. Se você iniciar A->B. Enquanto isso, você recebe uma atualização para ir para C e depois D. Quando a primeira animação A->B terminar, a próxima animará de B->D.
+Se outras Transições de Visualização do React já estiverem em execução, o React esperará que elas terminem antes de iniciar a próxima. No entanto, é importante notar que se múltiplas atualizações ocorrerem enquanto a primeira estiver em execução, todas elas serão agrupadas em uma única. Se você iniciar A->B. Então, nesse ínterim, você recebe uma atualização para ir para C e depois para D. Quando a primeira animação A->B terminar, a próxima animará de B->D.
 
-O ciclo de vida `getSnapshotBeforeUpdate` será chamado antes de `startViewTransition` e algum `view-transition-name` será atualizado ao mesmo tempo.
+O ciclo de vida `getSnapshotBeforeUpdate` será chamado antes de `startViewTransition` e alguns `view-transition-name` serão atualizados ao mesmo tempo.
 
-Então, o React chama `startViewTransition`. Dentro do `updateCallback`, o React irá:
+Então o React chama `startViewTransition`. Dentro do `updateCallback`, o React irá:
 
-- Aplicar suas mutações ao DOM e invocar useInsertionEffects.
-- Aguardar o carregamento das fontes.
-- Chamar componentDidMount, componentDidUpdate, useLayoutEffect e refs.
-- Aguardar a conclusão de qualquer Navegação pendente.
-- Então, o React medirá quaisquer alterações no layout para ver quais limites precisarão animar.
+- Aplicar suas mutações ao DOM e invocar `useInsertionEffects`.
+- Esperar que as fontes carreguem.
+- Chamar `componentDidMount`, `componentDidUpdate`, `useLayoutEffect` e `refs`.
+- Esperar que qualquer Navegação pendente termine.
+- Então o React medirá quaisquer mudanças no layout para ver quais limites precisarão ser animados.
 
-Depois que a Promise pronta do `startViewTransition` for resolvida, o React reverterá o `view-transition-name`. Então, o React invocará os callbacks `onEnter`, `onExit`, `onUpdate` e `onShare` para permitir o controle programático manual sobre as Animações. Isso será depois que as integradas padrão já tiverem sido computadas.
+Após a Promise `ready` de `startViewTransition` ser resolvida, o React reverterá o `view-transition-name`. Então o React invocará os callbacks `onEnter`, `onExit`, `onUpdate` e `onShare` para permitir controle programático manual sobre as Animações. Isso ocorrerá após os padrões integrados já terem sido computados.
 
-Se um `flushSync` acontecer no meio dessa sequência, o React pulará a Transição, pois ela depende da capacidade de ser concluída de forma síncrona.
+Se um `flushSync` ocorrer no meio desta sequência, o React pulará a Transição, pois depende de ser capaz de concluir de forma síncrona.
 
-Depois que a Promise finalizada do `startViewTransition` for resolvida, o React invocará `useEffect`. Isso impede que eles interfiram no desempenho da Animação. No entanto, isso não é uma garantia, pois se outro `setState` acontecer enquanto a Animação estiver em execução, ele ainda terá que invocar o `useEffect` mais cedo para preservar as garantias sequenciais.
+Após a Promise `finished` de `startViewTransition` ser resolvida, o React invocará `useEffect`. Isso evita que eles interfiram no desempenho da Animação. No entanto, isso não é uma garantia, pois se outro `setState` ocorrer enquanto a Animação estiver em execução, ele ainda terá que invocar o `useEffect` mais cedo para preservar as garantias sequenciais.
 
 </DeepDive>
 
@@ -80,21 +80,21 @@ Depois que a Promise finalizada do `startViewTransition` for resolvida, o React 
 
 Por padrão, `<ViewTransition>` anima com um cross-fade suave. Você pode personalizar a animação ou especificar uma transição de elemento compartilhado com estas props:
 
-* **opcional** `enter`: Uma string ou objeto. A [Classe de Transição de Visualização](#view-transition-class) a ser aplicada quando a entrada for ativada.
-* **opcional** `exit`: Uma string ou objeto. A [Classe de Transição de Visualização](#view-transition-class) a ser aplicada quando a saída for ativada.
+* **opcional** `enter`: Uma string ou objeto. A [Classe de Transição de Visualização](#view-transition-class) a ser aplicada quando `enter` for ativado.
+* **opcional** `exit`: Uma string ou objeto. A [Classe de Transição de Visualização](#view-transition-class) a ser aplicada quando `exit` for ativado.
 * **opcional** `update`: Uma string ou objeto. A [Classe de Transição de Visualização](#view-transition-class) a ser aplicada quando uma atualização for ativada.
 * **opcional** `share`: Uma string ou objeto. A [Classe de Transição de Visualização](#view-transition-class) a ser aplicada quando um elemento compartilhado for ativado.
-* **opcional** `default`: Uma string ou objeto. A [Classe de Transição de Visualização](#view-transition-class) usada quando nenhuma outra prop de ativação correspondente é encontrada.
-* **opcional** `name`: Uma string ou objeto. O nome da Transição de Visualização usada para transições de elementos compartilhados. Se não for fornecido, o React usará um nome exclusivo para cada Transição de Visualização para evitar animações inesperadas.
+* **opcional** `default`: Uma string ou objeto. A [Classe de Transição de Visualização](#view-transition-class) usada quando nenhuma outra prop de ativação correspondente for encontrada.
+* **opcional** `name`: Uma string ou objeto. O nome da Transição de Visualização usado para transições de elementos compartilhados. Se não for fornecido, o React usará um nome exclusivo para cada Transição de Visualização para evitar animações inesperadas.
 
-#### Callback {/*events*/}
+#### Callbacks {/*events*/}
 
-Esses callbacks permitem que você ajuste a animação de forma imperativa usando as APIs [animate](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate):
+Estes callbacks permitem ajustar a animação imperativamente usando as APIs [animate](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate):
 
-* **opcional** `onEnter`: Uma função. O React chama `onEnter` após uma animação de "entrada".
-* **opcional** `onExit`: Uma função. O React chama `onExit` após uma animação de "saída".
-* **opcional** `onShare`: Uma função. O React chama `onShare` após uma animação de "compartilhamento".
-* **opcional** `onUpdate`: Uma função. O React chama `onUpdate` após uma animação de "atualização".
+* **opcional** `onEnter`: Uma função. O React chama `onEnter` após uma animação de "enter".
+* **opcional** `onExit`: Uma função. O React chama `onExit` após uma animação de "exit".
+* **opcional** `onShare`: Uma função. O React chama `onShare` após uma animação de "share".
+* **opcional** `onUpdate`: Uma função. O React chama `onUpdate` após uma animação de "update".
 
 Cada callback recebe como argumentos:
 - `element`: O elemento DOM que foi animado.
@@ -102,9 +102,9 @@ Cada callback recebe como argumentos:
 
 ### Classe de Transição de Visualização {/*view-transition-class*/}
 
-A Classe de Transição de Visualização é o(s) nome(s) da classe CSS aplicado(s) pelo React durante a transição quando o ViewTransition é ativado. Pode ser uma string ou um objeto.
+A Classe de Transição de Visualização é o(s) nome(s) da classe CSS aplicado(s) pelo React durante a transição quando o `<ViewTransition>` é ativado. Pode ser uma string ou um objeto.
 - `string`: a `class` adicionada aos elementos filhos quando ativada. Se `'none'` for fornecido, nenhuma classe será adicionada.
-- `object`: a classe adicionada aos elementos filhos será a chave correspondente ao tipo de Transição de Visualização adicionada com `addTransitionType`. O objeto também pode especificar um `default` para usar se nenhum tipo correspondente for encontrado.
+- `object`: a classe adicionada aos elementos filhos será a chave correspondente ao tipo de Transição de Visualização adicionado com `addTransitionType`. O objeto também pode especificar um `default` a ser usado se nenhum tipo correspondente for encontrado.
 
 O valor `'none'` pode ser usado para impedir que uma Transição de Visualização seja ativada para um gatilho específico.
 
@@ -112,19 +112,20 @@ O valor `'none'` pode ser usado para impedir que uma Transição de Visualizaç�
 
 <Note>
 
-Em muitos exemplos iniciais de Transições de Visualização pela web, você terá visto o uso de um [`view-transition-name`](https://developer.mozilla.org/en-US/docs/Web/CSS/view-transition-name) e, em seguida, estilizado-o usando seletores `::view-transition-...(meu-nome)`. Não recomendamos isso para estilização. Em vez disso, normalmente recomendamos o uso de uma Classe de Transição de Visualização.
+Em muitos exemplos iniciais de Transições de Visualização na web, você verá o uso de [`view-transition-name`](https://developer.mozilla.org/en-US/docs/Web/CSS/view-transition-name) e, em seguida, o estilo usando seletores `::view-transition-...(meu-nome)`. Não recomendamos isso para estilização. Em vez disso, normalmente recomendamos o uso de uma Classe de Transição de Visualização.
 
 </Note>
 
-Para personalizar a animação para um `<ViewTransition>`, você pode fornecer uma Classe de Transição de Visualização a uma das props de ativação. A Classe de Transição de Visualização é um nome de classe CSS que o React aplica aos elementos filhos quando o ViewTransition é ativado.
+Para personalizar a animação de um `<ViewTransition>`, você pode fornecer uma Classe de Transição de Visualização a uma das props de ativação. A Classe de Transição de Visualização é um nome de classe CSS que o React aplica aos elementos filhos quando o `<ViewTransition>` é ativado.
 
-Por exemplo, para personalizar uma animação de "entrada", forneça um nome de classe à prop `enter`:
+Por exemplo, para personalizar uma animação de "enter", forneça um nome de classe à prop `enter`:
+
 
 ```js
 <ViewTransition enter="slide-in">
 ```
 
-Quando o `<ViewTransition>` ativa uma animação de "entrada", o React adicionará o nome da classe `slide-in`. Então, você pode se referir a esta classe usando [seletores de pseudo-elementos de transição de visualização](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API#pseudo-elements) para construir animações reutilizáveis:
+Quando o `<ViewTransition>` ativar uma animação de "enter", o React adicionará o nome de classe `slide-in`. Em seguida, você pode referenciar essa classe usando [pseudo-seletores de Transição de Visualização](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API#pseudo-elements) para criar animações reutilizáveis:
 
 ```css
 ::view-transition-group(.slide-in) {
@@ -137,22 +138,23 @@ Quando o `<ViewTransition>` ativa uma animação de "entrada", o React adicionar
 
 }
 ```
-No futuro, as bibliotecas CSS podem adicionar animações integradas usando Classes de Transição de Visualização para tornar isso mais fácil de usar.
+No futuro, bibliotecas CSS podem adicionar animações integradas usando Classes de Transição de Visualização para facilitar o uso.
 
 #### Ressalvas {/*caveats*/}
 
-- Por padrão, as atualizações de `setState` são imediatas e não ativam `<ViewTransition>`, apenas as atualizações encapsuladas em uma [Transição](/reference/react/useTransition). Você também pode usar [`<Suspense>`](/reference/react/Suspense) para participar de uma Transição para [revelar conteúdo](/reference/react/Suspense#revealing-content-together-at-once).
-- `<ViewTransition>` cria uma imagem que pode ser movida, dimensionada e com cross-fade. Ao contrário das Animações de Layout que você pode ter visto no React Native ou Motion, isso significa que nem todos os Elementos individuais dentro dele animam sua posição. Isso pode levar a um melhor desempenho e uma animação mais contínua e suave em comparação com a animação de cada peça individual. No entanto, também pode perder a continuidade em coisas que devem estar se movendo sozinhas. Portanto, pode ser necessário adicionar mais limites `<ViewTransition>` manualmente como resultado.
-- Muitos usuários podem preferir não ter animações na página. O React não desativa automaticamente as animações para este caso. Recomendamos o uso da consulta de mídia `@media (prefers-reduced-motion)` para desativar as animações ou reduzi-las com base na preferência do usuário. No futuro, as bibliotecas CSS podem ter isso integrado em seus predefinições.
-- Atualmente, `<ViewTransition>` só funciona no DOM. Estamos trabalhando para adicionar suporte para React Native e outras plataformas.
+- Por padrão, `setState` atualiza imediatamente e não ativa `<ViewTransition>`, apenas atualizações envolvidas em uma [Transição](/reference/react/useTransition). Você também pode usar [`<Suspense>`](/reference/react/Suspense) para optar por uma Transição para [revelar conteúdo](/reference/react/Suspense#revealing-content-together-at-once).
+- `<ViewTransition>` cria uma imagem que pode ser movida, dimensionada e com cross-fade. Ao contrário das Animações de Layout que você pode ter visto no React Native ou Motion, isso significa que nem todo Elemento individual dentro dele anima sua posição. Isso pode levar a um melhor desempenho e uma sensação mais contínua, animação suave em comparação com a animação de cada peça individual. No entanto, também pode perder a continuidade em coisas que deveriam estar se movendo por conta própria. Portanto, você pode ter que adicionar mais `<ViewTransition>` limites manualmente como resultado.
+- Muitos usuários podem preferir não ter animações na página. O React não desabilita automaticamente as animações para este caso. Recomendamos o uso da consulta de mídia `@media (prefers-reduced-motion)` para desabilitar animações ou atenuá-las com base na preferência do usuário. No futuro, bibliotecas CSS podem ter isso integrado em seus presets.
+- Atualmente, `<ViewTransition>` funciona apenas no DOM. Estamos trabalhando para adicionar suporte para React Native e outras plataformas.
 
 ---
 
+
 ## Uso {/*usage*/}
 
-### Animando um elemento na entrada/saída {/*animating-an-element-on-enter*/}
+### Animando um elemento ao entrar/sair {/*animating-an-element-on-enter*/}
 
-As Transições de Entrada/Saída são acionadas quando um `<ViewTransition>` é adicionado ou removido por um componente em uma transição:
+Transições de Entrada/Saída são acionadas quando um `<ViewTransition>` é adicionado ou removido por um componente em uma transição:
 
 ```js
 function Child() {
@@ -168,9 +170,9 @@ function Parent() {
 }
 ```
 
-Quando `setShow` é chamado, `show` muda para `true` e o componente `Child` é renderizado. Quando `setShow` é chamado dentro de `startTransition`, e `Child` renderiza um `ViewTransition` antes de quaisquer outros nós DOM, uma animação de `enter` é acionada.
+Quando `setShow` é chamado, `show` muda para `true` e o componente `Child` é renderizado. Quando `setShow` é chamado dentro de `startTransition`, e `Child` renderiza um `ViewTransition` antes de qualquer outro nó DOM, uma animação de `enter` é acionada.
 
-Quando `show` muda de volta para `false`, uma animação de `exit` é acionada.
+Quando `show` volta para `false`, uma animação de `exit` é acionada.
 
 <Sandpack>
 
@@ -248,6 +250,7 @@ export default [
   }
 ]
 ```
+
 
 ```css
 #root {
@@ -344,7 +347,7 @@ button:hover {
 
 <Pitfall>
 
-`<ViewTransition>` só é ativado se for colocado antes de qualquer nó DOM. Se `Child` tivesse esta aparência, nenhuma animação seria acionada:
+`<ViewTransition>` só é ativado se estiver posicionado antes de qualquer nó DOM. Se `Child` fosse assim, nenhuma animação seria acionada:
 
 ```js [3, 5]
 function Component() {
@@ -361,7 +364,7 @@ function Component() {
 ---
 ### Animando um elemento compartilhado {/*animating-a-shared-element*/}
 
-Normalmente, não recomendamos atribuir um nome a um `<ViewTransition>` e, em vez disso, deixar o React atribuir um nome automático. A razão pela qual você pode querer atribuir um nome é animar entre componentes completamente diferentes quando uma árvore é desmontada e outra árvore é montada ao mesmo tempo. Para preservar a continuidade.
+Normalmente, não recomendamos atribuir um nome a um `<ViewTransition>` e, em vez disso, deixamos o React atribuir um nome automaticamente. A razão pela qual você pode querer atribuir um nome é animar entre componentes completamente diferentes quando uma árvore é desmontada e outra é montada ao mesmo tempo. Para preservar a continuidade.
 
 ```js
 <ViewTransition name={UNIQUE_NAME}>
@@ -369,11 +372,11 @@ Normalmente, não recomendamos atribuir um nome a um `<ViewTransition>` e, em ve
 </ViewTransition>
 ```
 
-Quando uma árvore é desmontada e outra é montada, se houver um par em que o mesmo nome exista na árvore de desmontagem e na árvore de montagem, eles acionam a animação de "compartilhamento" em ambos. Ele anima do lado da desmontagem para o lado da montagem.
+Quando uma árvore é desmontada e outra é montada, se houver um par onde o mesmo nome existe na árvore que está sendo desmontada e na árvore que está sendo montada, eles acionam a animação "compartilhada" em ambos. Ela anima do lado que está sendo desmontado para o lado que está sendo montado.
 
-Ao contrário de uma animação de saída/entrada, isso pode estar profundamente dentro da árvore excluída/montada. Se um `<ViewTransition>` também for elegível para saída/entrada, a animação de "compartilhamento" terá precedência.
+Diferente de uma animação de saída/entrada, isso pode estar profundamente dentro da árvore deletada/montada. Se um `<ViewTransition>` também fosse elegível para saída/entrada, então a animação "compartilhada" tem precedência.
 
-Se a Transição primeiro desmontar um lado e, em seguida, levar a um fallback `<Suspense>` sendo mostrado antes que o novo nome seja eventualmente montado, nenhuma transição de elemento compartilhado acontecerá.
+Se a Transição primeiro desmontar um lado e depois levar a um fallback `<Suspense>` a ser exibido antes que o novo nome seja eventualmente montado, nenhuma transição de elemento compartilhado acontece.
 
 <Sandpack>
 
@@ -587,19 +590,20 @@ button:hover {
 
 </Sandpack>
 
+
 <Note>
 
-Se qualquer um dos lados montados ou desmontados de um par estiver fora da janela de visualização, nenhum par é formado. Isso garante que ele não entre ou saia da janela de visualização quando algo é rolado. Em vez disso, é tratado como uma entrada/saída regular por si só.
+Se um dos lados (montado ou desmontado) de um par estiver fora da viewport, então nenhum par é formado. Isso garante que ele não apareça ou desapareça da viewport quando algo é rolado. Em vez disso, ele é tratado como uma entrada/saída regular por si só.
 
-Isso não acontece se a mesma instância do Componente mudar de posição, o que aciona uma "atualização". Aqueles animam independentemente se uma posição estiver fora da janela de visualização.
+Isso não acontece se a mesma instância do Componente mudar de posição, o que aciona uma "atualização". Essas animam independentemente se uma posição está fora da viewport.
 
-Atualmente, há uma peculiaridade em que, se um `<ViewTransition>` desmontado profundamente aninhado estiver dentro da janela de visualização, mas o lado montado não estiver dentro da janela de visualização, o lado desmontado anima como sua própria animação de "saída", mesmo que esteja profundamente aninhado em vez de como parte da animação pai.
+Atualmente, há uma peculiaridade onde, se um `<ViewTransition>` desmontado profundamente aninhado estiver dentro da viewport, mas o lado montado não estiver dentro da viewport, o lado desmontado anima como sua própria animação de "saída", mesmo que esteja profundamente aninhado, em vez de fazer parte da animação pai.
 
 </Note>
 
 <Pitfall>
 
-É importante que haja apenas uma coisa com o mesmo nome montada por vez em todo o aplicativo. Portanto, é importante usar namespaces exclusivos para o nome para evitar conflitos. Para garantir que você possa fazer isso, convém adicionar uma constante em um módulo separado que você importa.
+É importante que haja apenas uma coisa com o mesmo nome montada por vez em todo o aplicativo. Portanto, é importante usar namespaces únicos para o nome para evitar conflitos. Para garantir que você possa fazer isso, você pode querer adicionar uma constante em um módulo separado que você importe.
 
 ```js
 export const MY_NAME = "my-globally-unique-name";
@@ -615,11 +619,12 @@ import {MY_NAME} from './shared-name';
 
 ### Animando a reordenação de itens em uma lista {/*animating-reorder-of-items-in-a-list*/}
 
+
 ```js
 items.map(item => <Component key={item.id} item={item} />)
 ```
 
-Ao reordenar uma lista, sem atualizar o conteúdo, a animação de "atualização" é acionada em cada `<ViewTransition>` na lista se eles estiverem fora de um nó DOM. Semelhante às animações de entrada/saída.
+Ao reordenar uma lista, sem atualizar o conteúdo, a animação "update" é acionada em cada `<ViewTransition>` na lista se eles estiverem fora de um nó DOM. Semelhante às animações de entrada/saída.
 
 Isso significa que isso acionará a animação neste `<ViewTransition>`:
 
@@ -832,7 +837,7 @@ function Component() {
   return <div><ViewTransition>...</ViewTransition></div>;
 }
 ```
-Em vez disso, qualquer `<ViewTransition>` pai faria o cross-fade. Se não houver `<ViewTransition>` pai, não haverá animação nesse caso.
+Em vez disso, qualquer `<ViewTransition>` pai faria um cross-fade. Se não houver um `<ViewTransition>` pai, então não há animação nesse caso.
 
 <Sandpack>
 
@@ -942,4 +947,1266 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #
+  background-color: #f0f8ff;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s, border 0.3s;
+}
+button:hover {
+  border: 2px solid #ccc;
+  background-color: #e0e8ff;
+}
+.thumbnail {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5rem;
+  outline-offset: 2px;
+  width: 8rem;
+  vertical-align: middle;
+  background-color: #ffffff;
+  background-size: cover;
+  user-select: none;
+}
+.thumbnail.blue {
+  background-image: conic-gradient(at top right, #c76a15, #087ea4, #2b3491);
+}
+.thumbnail.red {
+  background-image: conic-gradient(at top right, #c76a15, #a6423a, #2b3491);
+}
+.thumbnail.green {
+  background-image: conic-gradient(at top right, #c76a15, #388f7f, #2b3491);
+}
+.thumbnail.purple {
+  background-image: conic-gradient(at top right, #c76a15, #575fb7, #2b3491);
+}
+.video {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 1em;
+}
+.video .link {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 0;
+  gap: 0.125rem;
+  outline-offset: 4px;
+}
+.video .info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 8px;
+  gap: 0.125rem;
+}
+.video .info:hover {
+  text-decoration: underline;
+}
+.video-title {
+  font-size: 15px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #23272f;
+}
+.video-description {
+  color: #5e687e;
+  font-size: 13px;
+}
+```
+
+
+```json package.json hidden
+{
+  "dependencies": {
+    "react": "experimental",
+    "react-dom": "experimental",
+    "react-scripts": "latest"
+  }
+}
+```
+
+</Sandpack>
+
+Isso significa que você pode querer evitar elementos de wrapper em listas onde você deseja permitir que o Componente controle sua própria animação de reordenação:
+
+```
+items.map(item => <div><Component key={item.id} item={item} /></div>)
+```
+
+A regra acima também se aplica se um dos itens for atualizado para redimensionar, o que faz com que os irmãos redimensionem, ele também animará seu `<ViewTransition>` irmão, mas apenas se eles forem irmãos imediatos.
+
+Isso significa que durante uma atualização, que causa muito relayout, ele não anima individualmente cada `<ViewTransition>` na página. Isso levaria a muitas animações barulhentas que distraem da mudança real. Portanto, o React é mais conservador sobre quando uma animação individual é acionada.
+
+<Pitfall>
+
+É importante usar corretamente as chaves para preservar a identidade ao reordenar listas. Pode parecer que você poderia usar "name", transições de elementos compartilhados, para animar reordenações, mas isso não seria acionado se um lado estivesse fora da viewport. Para animar uma reordenação, você geralmente quer mostrar que ela foi para uma posição fora da viewport.
+
+</Pitfall>
+
+---
+
+### Animando conteúdo do Suspense {/*animating-from-suspense-content*/}
+
+Assim como qualquer Transição, o React espera pelos dados e por novo CSS (`<link rel="stylesheet" precedence="...">`) antes de executar a animação. Além disso, as ViewTransitions esperam até 500ms para que novas fontes sejam carregadas antes de iniciar a animação para evitar que elas pisquem posteriormente. Pelo mesmo motivo, uma imagem envolvida por ViewTransition esperará o carregamento da imagem.
+
+Se estiver dentro de uma nova instância de boundary do Suspense, o fallback será exibido primeiro. Após o boundary do Suspense carregar completamente, ele aciona a `<ViewTransition>` para animar a revelação do conteúdo.
+
+Atualmente, isso ocorre apenas para Transições do lado do cliente. No futuro, isso também animará boundaries do Suspense para SSR em streaming quando o conteúdo do servidor suspender durante o carregamento inicial.
+
+Existem duas maneiras de animar boundaries do Suspense, dependendo de onde você coloca a `<ViewTransition>`:
+
+Atualização:
+
+```
+<ViewTransition>
+  <Suspense fallback={<A />}>
+    <B />
+  </Suspense>
+</ViewTransition>
+```
+Neste cenário, quando o conteúdo vai de A para B, ele será tratado como uma "atualização" e aplicará essa classe, se apropriado. Tanto A quanto B receberão o mesmo `view-transition-name` e, portanto, atuarão como um cross-fade por padrão.
+
+<Sandpack>
+
+```js src/Video.js hidden
+function Thumbnail({ video, children }) {
+  return (
+    <div
+      aria-hidden="true"
+      tabIndex={-1}
+      className={`thumbnail ${video.image}`}
+    />
+  );
+}
+
+export function Video({ video }) {
+  return (
+    <div className="video">
+      <div className="link">
+        <Thumbnail video={video}></Thumbnail>
+        <div className="info">
+          <div className="video-title">{video.title}</div>
+          <div className="video-description">{video.description}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function VideoPlaceholder() {
+  const video = {image: "loading"}
+  return (
+    <div className="video">
+      <div className="link">
+        <Thumbnail video={video}></Thumbnail>
+        <div className="info">
+          <div className="video-title loading" />
+          <div className="video-description loading" />
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+```js
+import {
+  unstable_ViewTransition as ViewTransition,
+  useState,
+  startTransition,
+  Suspense
+} from 'react';
+import {Video, VideoPlaceholder} from "./Video";
+import {useLazyVideoData} from "./data"
+
+function LazyVideo() {
+  const video = useLazyVideoData();
+  return (
+    <Video video={video}/>
+  );
+}
+
+export default function Component() {
+  const [showItem, setShowItem] = useState(false);
+  return (
+    <>
+      <button
+        onClick={() => {
+          startTransition(() => {
+            setShowItem((prev) => !prev);
+          });
+        }}
+      >{showItem ? '➖' : '➕'}</button>
+      {showItem ? (
+        <ViewTransition>
+          <Suspense fallback={<VideoPlaceholder />}>
+            <LazyVideo />
+          </Suspense>
+        </ViewTransition>
+      ) : null}
+    </>
+  );
+}
+```
+
+```js src/data.js hidden
+import {use} from "react";
+
+let cache = null;
+
+function fetchVideo() {
+  if (!cache) {
+    cache = new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          id: '1',
+          title: 'First video',
+          description: 'Video description',
+          image: 'blue',
+        });
+      }, 1000);
+    });
+  }
+  return cache;
+}
+
+export function useLazyVideoData() {
+  return use(fetchVideo());
+}
+```
+
+
+```css
+#root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 200px;
+}
+button {
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f8ff;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s, border 0.3s;
+}
+button:hover {
+  border: 2px solid #ccc;
+  background-color: #e0e8ff;
+}
+.thumbnail {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5rem;
+  outline-offset: 2px;
+  width: 8rem;
+  vertical-align: middle;
+  background-color: #ffffff;
+  background-size: cover;
+  user-select: none;
+}
+.thumbnail.blue {
+  background-image: conic-gradient(at top right, #c76a15, #087ea4, #2b3491);
+}
+.loading {
+  background-image: linear-gradient(90deg, rgba(173, 216, 230, 0.3) 25%, rgba(135, 206, 250, 0.5) 50%, rgba(173, 216, 230, 0.3) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.video {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 1em;
+}
+.video .link {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 0;
+  gap: 0.125rem;
+  outline-offset: 4px;
+  cursor: pointer;
+}
+.video .info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 8px;
+  gap: 0.125rem;
+}
+.video .info:hover {
+  text-decoration: underline;
+}
+.video-title {
+  font-size: 15px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #23272f;
+}
+.video-title.loading {
+  height: 20px;
+  width: 80px;
+  border-radius: 0.5rem;
+}
+.video-description {
+  color: #5e687e;
+  font-size: 13px;
+  border-radius: 0.5rem;
+}
+.video-description.loading {
+  height: 15px;
+  width: 100px;
+}
+```
+
+```json package.json hidden
+{
+  "dependencies": {
+    "react": "experimental",
+    "react-dom": "experimental",
+    "react-scripts": "latest"
+  }
+}
+```
+
+</Sandpack>
+
+Entrada/Saída:
+
+```
+<Suspense fallback={<ViewTransition><A /></ViewTransition>}>
+  <ViewTransition><B /></ViewTransition>
+</Suspense>
+```
+
+Neste cenário, estas são duas instâncias separadas de ViewTransition, cada uma com seu próprio `view-transition-name`. Isso será tratado como uma "saída" de `<A>` e uma "entrada" de `<B>`.
+
+Você pode obter efeitos diferentes dependendo de onde escolher colocar o boundary `<ViewTransition>`.
+
+---
+### Optando por não participar de uma animação {/*opting-out-of-an-animation*/}
+
+Às vezes, você está envolvendo um componente existente grande, como uma página inteira, e deseja animar algumas atualizações, como a mudança de tema. No entanto, você não quer que todas as atualizações dentro da página inteira participem do cross-fade quando elas estiverem sendo atualizadas. Especialmente se você estiver adicionando mais animações incrementalmente.
+
+Você pode usar a classe "none" para optar por não participar de uma animação. Ao envolver seus filhos em um "none", você pode desabilitar animações para atualizações neles, enquanto o pai ainda aciona.
+
+```js
+<ViewTransition>
+  <div className={theme}>
+    <ViewTransition update="none">
+      {children}
+    </ViewTransition>
+  </div>
+</ViewTransition>
+```
+
+Isso animará apenas se o tema mudar e não se apenas os filhos forem atualizados. Os filhos ainda podem optar por participar novamente com sua própria `<ViewTransition>`, mas pelo menos será manual novamente.
+
+---
+
+### Personalizando animações {/*customizing-animations*/}
+
+Por padrão, `<ViewTransition>` inclui o cross-fade padrão do navegador.
+
+Para personalizar animações, você pode fornecer props ao componente `<ViewTransition>` para especificar quais animações usar, com base em como a `<ViewTransition>` é ativada.
+
+Por exemplo, podemos desacelerar a animação de cross-fade padrão:
+
+```js
+<ViewTransition default="slow-fade">
+  <Video />
+</ViewTransition>
+```
+
+E definir `slow-fade` em CSS usando classes de transição de visualização:
+
+```css
+::view-transition-old(.slow-fade) {
+    animation-duration: 500ms;
+}
+
+::view-transition-new(.slow-fade) {
+    animation-duration: 500ms;
+}
+```
+
+<Sandpack>
+
+```js src/Video.js hidden
+function Thumbnail({ video, children }) {
+  return (
+    <div
+      aria-hidden="true"
+      tabIndex={-1}
+      className={`thumbnail ${video.image}`}
+    />
+  );
+}
+
+export function Video({ video }) {
+  return (
+    <div className="video">
+      <div
+        className="link"
+      >
+        <Thumbnail video={video}></Thumbnail>
+
+        <div className="info">
+          <div className="video-title">{video.title}</div>
+          <div className="video-description">{video.description}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+```js
+import {
+  unstable_ViewTransition as ViewTransition,
+  useState,
+  startTransition
+} from 'react';
+import {Video} from "./Video";
+import videos from "./data"
+
+function Item() {
+  return (
+    <ViewTransition default="slow-fade">
+      <Video video={videos[0]}/>
+    </ViewTransition>
+  );
+}
+
+export default function Component() {
+  const [showItem, setShowItem] = useState(false);
+  return (
+    <>
+      <button
+        onClick={() => {
+          startTransition(() => {
+            setShowItem((prev) => !prev);
+          });
+        }}
+      >{showItem ? '➖' : '➕'}</button>
+
+      {showItem ? <Item /> : null}
+    </>
+  );
+}
+```
+
+```js src/data.js hidden
+export default [
+  {
+    id: '1',
+    title: 'First video',
+    description: 'Video description',
+    image: 'blue',
+  }
+]
+```
+
+
+```css
+::view-transition-old(.slow-fade) {
+    animation-duration: 500ms;
+}
+
+::view-transition-new(.slow-fade) {
+    animation-duration: 500ms;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 200px;
+}
+button {
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f8ff;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s, border 0.3s;
+}
+button:hover {
+  border: 2px solid #ccc;
+  background-color: #e0e8ff;
+}
+.thumbnail {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5rem;
+  outline-offset: 2px;
+  width: 8rem;
+  vertical-align: middle;
+  background-color: #ffffff;
+  background-size: cover;
+  user-select: none;
+}
+.thumbnail.blue {
+  background-image: conic-gradient(at top right, #c76a15, #087ea4, #2b3491);
+}
+.video {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 1em;
+}
+.video .link {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 0;
+  gap: 0.125rem;
+  outline-offset: 4px;
+  cursor: pointer;
+}
+.video .info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 8px;
+  gap: 0.125rem;
+}
+.video .info:hover {
+  text-decoration: underline;
+}
+.video-title {
+  font-size: 15px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #23272f;
+}
+.video-description {
+  color: #5e687e;
+  font-size: 13px;
+}
+```
+
+```json package.json hidden
+{
+  "dependencies": {
+    "react": "experimental",
+    "react-dom": "experimental",
+    "react-scripts": "latest"
+  }
+}
+```
+
+</Sandpack>
+
+Além de definir o `default`, você também pode fornecer configurações para animações `enter`, `exit`, `update` e `share`.
+
+<Sandpack>
+
+```js src/Video.js hidden
+function Thumbnail({ video, children }) {
+  return (
+    <div
+      aria-hidden="true"
+      tabIndex={-1}
+      className={`thumbnail ${video.image}`}
+    />
+  );
+}
+
+export function Video({ video }) {
+  return (
+    <div className="video">
+      <div
+        className="link"
+      >
+        <Thumbnail video={video}></Thumbnail>
+
+        <div className="info">
+          <div className="video-title">{video.title}</div>
+          <div className="video-description">{video.description}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+```js
+import {
+  unstable_ViewTransition as ViewTransition,
+  useState,
+  startTransition
+} from 'react';
+import {Video} from "./Video";
+import videos from "./data"
+
+function Item() {
+  return (
+    <ViewTransition enter="slide-in" exit="slide-out">
+      <Video video={videos[0]}/>
+    </ViewTransition>
+  );
+}
+
+export default function Component() {
+  const [showItem, setShowItem] = useState(false);
+  return (
+    <>
+      <button
+        onClick={() => {
+          startTransition(() => {
+            setShowItem((prev) => !prev);
+          });
+        }}
+      >{showItem ? '➖' : '➕'}</button>
+
+      {showItem ? <Item /> : null}
+    </>
+  );
+}
+```
+
+```js src/data.js hidden
+export default [
+  {
+    id: '1',
+    title: 'First video',
+    description: 'Video description',
+    image: 'blue',
+  }
+]
+```
+
+
+```css
+::view-transition-old(.slide-in) {
+  animation-name: slideOutRight;
+  animation-duration: 500ms;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-new(.slide-in) {
+  animation-name: slideInRight;
+  animation-duration: 500ms;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-old(.slide-out) {
+  animation-name: slideOutLeft;
+  animation-duration: 500ms;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-new(.slide-out) {
+  animation-name: slideInLeft;
+  animation-duration: 500ms;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 200px;
+}
+button {
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f8ff;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s, border 0.3s;
+}
+button:hover {
+  border: 2px solid #ccc;
+  background-color: #e0e8ff;
+}
+.thumbnail {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5rem;
+  outline-offset: 2px;
+  width: 8rem;
+  vertical-align: middle;
+  background-color: #ffffff;
+  background-size: cover;
+  user-select: none;
+}
+.thumbnail.blue {
+  background-image: conic-gradient(at top right, #c76a15, #087ea4, #2b3491);
+}
+.video {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 1em;
+}
+.video .link {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 0;
+  gap: 0.125rem;
+  outline-offset: 4px;
+  cursor: pointer;
+}
+.video .info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 8px;
+  gap: 0.125rem;
+}
+.video .info:hover {
+  text-decoration: underline;
+}
+.video-title {
+  font-size: 15px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #23272f;
+}
+.video-description {
+  color: #5e687e;
+  font-size: 13px;
+}
+```
+
+```json package.json hidden
+{
+  "dependencies": {
+    "react": "experimental",
+    "react-dom": "experimental",
+    "react-scripts": "latest"
+  }
+}
+```
+
+</Sandpack>
+
+### Personalizando animações com tipos {/*customizing-animations-with-types*/}
+Você pode usar a API [`addTransitionType`](/reference/react/addTransitionType) para adicionar um nome de classe aos elementos filhos quando um tipo específico de transição é ativado para um gatilho de ativação específico. Isso permite que você personalize a animação para cada tipo de transição.
+
+Por exemplo, para personalizar a animação para todas as navegações para frente e para trás:
+
+```js
+<ViewTransition default={{
+  'navigation-back': 'slide-right',
+  'navigation-forward': 'slide-left',
+ }}>
+  <div>...</div>
+</ViewTransition>
+ 
+// no seu roteador:
+startTransition(() => {
+  addTransitionType('navigation-' + navigationType);
+});
+```
+
+Quando a ViewTransition ativa uma animação "navigation-back", o React adicionará o nome da classe "slide-right". Quando a ViewTransition ativa uma animação "navigation-forward", o React adicionará o nome da classe "slide-left".
+
+No futuro, roteadores e outras bibliotecas podem adicionar suporte para tipos e estilos de transição de visualização padrão.
+
+<Sandpack>
+
+```js src/Video.js hidden
+function Thumbnail({ video, children }) {
+  return (
+    <div
+      aria-hidden="true"
+      tabIndex={-1}
+      className={`thumbnail ${video.image}`}
+    />
+  );
+}
+
+export function Video({ video }) {
+  return (
+    <div className="video">
+      <div
+        className="link"
+      >
+        <Thumbnail video={video}></Thumbnail>
+        <div className="info">
+          <div className="video-title">{video.title}</div>
+          <div className="video-description">{video.description}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+```js
+import {
+  unstable_ViewTransition as ViewTransition,
+  unstable_addTransitionType as addTransitionType,
+  useState,
+  startTransition,
+} from "react";
+import {Video} from "./Video";
+import videos from "./data"
+
+function Item() {
+  return (
+    <ViewTransition enter={
+        {
+          "add-video-back": "slide-in-back",
+          "add-video-forward": "slide-in-forward"
+        }
+      }
+      exit={
+        {
+          "remove-video-back": "slide-in-forward",
+          "remove-video-forward": "slide-in-back"
+        }
+      }>
+      <Video video={videos[0]}/>
+    </ViewTransition>
+  );
+}
+
+export default function Component() {
+  const [showItem, setShowItem] = useState(false);
+  return (
+    <>
+      <div className="button-container">
+        <button
+          onClick={() => {
+            startTransition(() => {
+              if (showItem) {
+                addTransitionType("remove-video-back")
+              } else {
+                addTransitionType("add-video-back")
+              }
+              setShowItem((prev) => !prev);
+            });
+          }}
+        >⬅️</button>
+        <button
+          onClick={() => {
+            startTransition(() => {
+              if (showItem) {
+                addTransitionType("remove-video-forward")
+              } else {
+                addTransitionType("add-video-forward")
+              }
+              setShowItem((prev) => !prev);
+            });
+          }}
+        >➡️</button>
+      </div>
+      {showItem ? <Item /> : null}
+    </>
+  );
+}
+```
+
+```js src/data.js hidden
+export default [
+  {
+    id: '1',
+    title: 'First video',
+    description: 'Video description',
+    image: 'blue',
+  }
+]
+```
+
+
+```css
+::view-transition-old(.slide-in-back) {
+  animation-name: slideOutRight;
+  animation-duration: 500ms;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-new(.slide-in-back) {
+  animation-name: slideInRight;
+  animation-duration: 500ms;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-old(.slide-out-back) {
+  animation-name: slideOutLeft;
+  animation-duration: 500ms;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-new(.slide-out-back) {
+  animation-name: slideInLeft;
+  animation-duration: 500ms;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-old(.slide-in-forward) {
+  animation-name: slideOutLeft;
+  animation-duration: 500ms;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-new(.slide-in-forward) {
+  animation-name: slideInLeft;
+  animation-duration: 500ms;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-old(.slide-out-forward) {
+  animation-name: slideOutRight;
+  animation-duration: 500ms;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-new(.slide-out-forward) {
+  animation-name: slideInRight;
+  animation-duration: 500ms;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 200px;
+}
+button {
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f8ff;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s, border 0.3s;
+}
+button:hover {
+  border: 2px solid #ccc;
+  background-color: #e0e8ff;
+}
+.button-container {
+  display: flex;
+}
+.thumbnail {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5rem;
+  outline-offset: 2px;
+  width: 8rem;
+  vertical-align: middle;
+  background-color: #ffffff;
+  background-size: cover;
+  user-select: none;
+}
+.thumbnail.blue {
+  background-image: conic-gradient(at top right, #c76a15, #087ea4, #2b3491);
+}
+.video {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 1em;
+}
+.video .link {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 0;
+  gap: 0.125rem;
+  outline-offset: 4px;
+  cursor: pointer;
+}
+.video .info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 8px;
+  gap: 0.125rem;
+}
+.video .info:hover {
+  text-decoration: underline;
+}
+.video-title {
+  font-size: 15px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #23272f;
+}
+.video-description {
+  color: #5e687e;
+  font-size: 13px;
+}
+```
+
+```json package.json hidden
+{
+  "dependencies": {
+    "react": "experimental",
+    "react-dom": "experimental",
+    "react-scripts": "latest"
+  }
+}
+```
+
+</Sandpack>
+
+### Construindo roteadores habilitados para View Transition {/*building-view-transition-enabled-routers*/}
+
+O React espera que qualquer Navegação pendente termine para garantir que a restauração da rolagem ocorra dentro da animação. Se a Navegação estiver bloqueada no React, seu roteador deve desbloquear em `useLayoutEffect`, pois `useEffect` levaria a um deadlock.
+
+Se um `startTransition` for iniciado a partir do evento popstate legado, como durante uma navegação "para trás", ele deverá terminar de forma síncrona para garantir que a restauração da rolagem e do formulário funcione corretamente. Isso entra em conflito com a execução de uma animação de View Transition. Portanto, o React pulará as animações do popstate. Consequentemente, as animações não serão executadas para o botão voltar. Você pode corrigir isso atualizando seu roteador para usar a API de Navegação.
+
+---
+
+## Solução de Problemas {/*troubleshooting*/}
+
+### Meu `<ViewTransition>` não está ativando {/*my-viewtransition-is-not-activating*/}
+
+`<ViewTransition>` só ativa se for colocado antes de qualquer nó DOM:
+
+```js [3, 5]
+function Component() {
+  return (
+    <div>
+      <ViewTransition>Hi</ViewTransition>
+    </div>
+  );
+}
+```
+
+Para corrigir, certifique-se de que `<ViewTransition>` venha antes de quaisquer outros nós DOM:
+
+```js [3, 5] 
+function Component() {
+  return (
+    <ViewTransition>
+      <div>Hi</div>
+    </ViewTransition>
+  );
+}
+```
+
+### Estou recebendo um erro "Existem dois componentes `<ViewTransition name=%s>` com o mesmo nome montados ao mesmo tempo." {/*two-viewtransition-with-same-name*/}
+
+Este erro ocorre quando dois componentes `<ViewTransition>` com o mesmo `name` são montados ao mesmo tempo:
+
+
+```js [3]
+function Item() {
+  // 🚩 Todos os itens receberão o mesmo "name".
+  return <ViewTransition name="item">...</ViewTransition>;
+}
+
+function ItemList({items}) {
+  return (
+    <>
+      {item.map(item => <Item key={item.id} />)}
+    </>
+  );
+}
+```
+
+Isso fará com que a Transição de Visualização gere um erro. Em desenvolvimento, o React detecta esse problema para apresentá-lo e registra dois erros:
+
+<ConsoleBlockMulti>
+<ConsoleLogLine level="error">
+
+Existem dois componentes `<ViewTransition name=%s>` com o mesmo nome montados ao mesmo tempo. Isso não é suportado e fará com que as Transições de Visualização gerem um erro. Tente usar um nome mais exclusivo, por exemplo, usando um prefixo de namespace e adicionando o id de um item ao nome.
+{'    '}at Item
+{'    '}at ItemList
+
+</ConsoleLogLine>
+
+<ConsoleLogLine level="error">
+
+O duplicado `<ViewTransition name=%s>` existente tem este rastreamento de pilha.
+{'    '}at Item
+{'    '}at ItemList
+
+</ConsoleLogLine>
+</ConsoleBlockMulti>
+
+Para corrigir, certifique-se de que haja apenas um `<ViewTransition>` com o mesmo nome montado por vez em todo o aplicativo, garantindo que o `name` seja exclusivo ou adicionando um `id` ao nome:
+
+```js [3]
+function Item({id}) {
+  // ✅ Todos os itens receberão o mesmo "name".
+  return <ViewTransition name={`item-${id}`}>...</ViewTransition>;
+}
+
+function ItemList({items}) {
+  return (
+    <>
+      {item.map(item => <Item key={item.id} item={item} />)}
+    </>
+  );
+}
+```
