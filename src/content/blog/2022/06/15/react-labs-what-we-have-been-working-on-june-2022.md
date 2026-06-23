@@ -44,7 +44,7 @@ Geração de Site Estático (SSG) e Regeneração Estática Incremental (ISR) s�
 
 Apresentamos uma [prévia inicial](https://www.youtube.com/watch?v=lGEMwh32soc) do React Forget na React Conf 2021. É um compilador que gera automaticamente o equivalente a chamadas `useMemo` e `useCallback` para minimizar o custo de re-renderização, mantendo o modelo de programação do React.
 
-Recentemente, finalizamos uma reescrita do compilador para torná-lo mais confiável e capaz. Esta nova arquitetura nos permite analisar e memorizar padrões mais complexos, como o uso de [mutações locais](/learn/keeping-components-pure#local-mutation-your-components-little-secret), e abre muitas novas oportunidades de otimização em tempo de compilação, além de apenas igualar os Hooks de memorização.
+Recentemente, finalizamos uma reescrita do compilador para torná-lo mais confiável e capaz. Esta nova arquitetura nos permite analisar e memoizar padrões mais complexos, como o uso de [mutações locais](/learn/keeping-components-pure#local-mutation-your-components-little-secret), e abre muitas novas oportunidades de otimização em tempo de compilação, além de apenas igualar os Hooks de memorização.
 
 Também estamos trabalhando em um playground para explorar muitos aspectos do compilador. Embora o objetivo do playground seja facilitar o desenvolvimento do compilador, acreditamos que ele facilitará a experimentação e a construção de intuição sobre o que o compilador faz. Ele revela várias percepções sobre como ele funciona internamente e renderiza ao vivo as saídas do compilador conforme você digita. Isso será lançado junto com o compilador quando ele for liberado.
 
